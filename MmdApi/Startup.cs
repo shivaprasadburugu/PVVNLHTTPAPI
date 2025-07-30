@@ -151,10 +151,12 @@ namespace MmdApi
 
             app.UseEndpoints(endpoints =>
             {
+                //endpoints.MapControllers
                 endpoints.MapControllers();
             });
         }
 
+        //I have added this method to rise the pull request
         private static void RegisterContractsFromLib(IServiceCollection services, string libFullName, string classNameEnd)
         {
             Assembly repository = Assembly.Load(libFullName);
