@@ -155,6 +155,7 @@ namespace MmdApi
             });
         }
 
+        //I have added this method to rise the pull request
         private static void RegisterContractsFromLib(IServiceCollection services, string libFullName, string classNameEnd)
         {
             Assembly repository = Assembly.Load(libFullName);
