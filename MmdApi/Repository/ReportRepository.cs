@@ -674,6 +674,7 @@ namespace MdmApi.Repository
             }
             catch (Exception ex)
             {
+                // return null;
                 return null;
             }
         }
