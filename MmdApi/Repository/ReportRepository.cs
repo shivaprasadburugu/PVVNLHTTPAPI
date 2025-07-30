@@ -690,6 +690,7 @@ namespace MdmApi.Repository
                 lstParams.Add(new KeyValuePair<string, object>("level", date.level));
                 lstParams.Add(new KeyValuePair<string, object>("id", date.id));
                 DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.outsource_report[0], StoredProcedure.outsource_report[1], lstParams);
+                //return ds;
                 return ds;
             }
             catch (Exception ex)
