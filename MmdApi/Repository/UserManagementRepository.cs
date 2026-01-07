@@ -1,17 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using MdmApi.DataContext;
 using MdmApi.Helpers;
 using MdmApi.Models;
 using MdmApi.Web.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Npgsql;
 using NpgsqlTypes;
+
+using System.Security.Cryptography;
 
 namespace MdmApi.Repository
 {
@@ -20,89 +27,141 @@ namespace MdmApi.Repository
         private readonly ContextDb _context;
         private readonly ServiceConfiguration _appSettings;
         private readonly IDatabaseSecureConnectionHelperRepository _databaseSecureConnectionHelper;
-        
+        public readonly IConfiguration _config;
+        private readonly JwtTokenService _jwtService;
+
         //private readonly Cryptography _cry;
 
         //  private readonly TokenValidationParameters _tokenValidationParameters;
         public UserManagementRepository( ContextDb context,
-            IOptions<ServiceConfiguration> settings, IDatabaseSecureConnectionHelperRepository databaseSecureConnectionHelper
-          //, Cryptography cry
+            IOptions<ServiceConfiguration> settings, IDatabaseSecureConnectionHelperRepository databaseSecureConnectionHelper, IConfiguration configuration, JwtTokenService jwtService
+
           )
         {
             _context = context;
             _appSettings = settings.Value;
             _databaseSecureConnectionHelper = databaseSecureConnectionHelper;
-          
+            _config = configuration;
+            _jwtService = jwtService;
+
             //_cry = cry;
         }
-        
-      public async Task<ResponseModel<LoginResponseWeb>> LoginAsyncweb(LoginModelWeb login)
+        public async Task<ResponseModel<LoginResponseWeb>> LoginAsyncweb(LoginModelWeb login, HttpResponse httpResponse)
         {
             ResponseModel<LoginResponseWeb> response = new ResponseModel<LoginResponseWeb>();
             try
             {
-                List<LoginResponseWeb> loginUser = new List<LoginResponseWeb>();
                 LoginResponseWeb user = new LoginResponseWeb();
                 Cryptography _cry = new Cryptography();
-                login.password = _cry.Encrypt(login.password);
-                List<KeyValuePair<string, object>> lstParams = new List<KeyValuePair<string, object>>();
-                lstParams.Add(new KeyValuePair<string, object>("loginuserid", login.username));
-                lstParams.Add(new KeyValuePair<string, object>("pass_word", login.password));
-                DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.GetLoginCheckWeb[0], StoredProcedure.GetLoginCheckWeb[1], lstParams);
-                if (ds.Tables[0].Rows.Count > 0)
-                {
-                    // loginUser = utility.ConvertDataTable<LoginResponse>(ds.Tables[0]);
+                var dotnetppassword = _cry.Encrypt(login.password);
+                var reactpassword = login.password;
 
+                // DB check
+                List<KeyValuePair<string, object>> lstParams = new List<KeyValuePair<string, object>>
+        {
+            new KeyValuePair<string, object>("loginuserid", login.username),
+            new KeyValuePair<string, object>("pass_word", login.password)
+        };
 
-                    DataTable dt = ds.Tables[0];
+                DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(
+                    StoredProcedure.GetLoginCheckWeb[0],
+                    StoredProcedure.GetLoginCheckWeb[1],
+                    lstParams
+                );
 
-                    // Check if "officeaddresses" column exists
-                    if (dt.Columns.Contains("officeaddresses"))
-                    {
-                        user.officeaddresses = dt.Rows[0]["officeaddresses"] != DBNull.Value
-                            ? dt.Rows[0]["officeaddresses"].ToString()
-                            : string.Empty;
-
-                        user.userloginid = dt.Rows[0]["userloginid"] != DBNull.Value
-                            ? dt.Rows[0]["userloginid"].ToString()
-                            : string.Empty;
-                    }
-                    else
-                    {
-                        user.Name = ds.Tables[0].Rows[0]["name"].ToString();
-                        user.RoleId = Convert.ToInt32(ds.Tables[0].Rows[0]["roleid"]);// loginUser[0].RoleId;                   
-                        user.UserId = Convert.ToInt32(ds.Tables[0].Rows[0]["userid"]);
-                        user.UserLevel = Convert.ToInt32(ds.Tables[0].Rows[0]["userlevel"]);
-                        user.UserLevelId = Convert.ToInt32(ds.Tables[0].Rows[0]["userlevelid"]);
-                        user.Project_Name = ds.Tables[0].Rows[0]["projectname"].ToString();
-                        user.EmailId = ds.Tables[0].Rows[0]["emailid"].ToString();
-                    }
-                   user.employeeid = ds.Tables[0].Rows[0]["employeeid"].ToString();
-                    user.LoginName = ds.Tables[0].Rows[0]["loginname"].ToString();
-                    user.LoginType = ds.Tables[0].Rows[0]["logintype"].ToString();
-                    //user.officeaddresses = ds.Tables[0].Rows[0]["officeaddresses"].ToString();
-
-                    //user.userloginid = ds.Tables[0].Rows[0]["userloginid"].ToString();
-
-                    response.IsSuccess = true;
-                    response.Message = "Success";
-                    response.Data = user;
-                    return response;
-                }
-                else
+                if (ds.Tables[0].Rows.Count == 0)
                 {
                     response.IsSuccess = false;
                     response.Message = "Invalid Username And Password";
                     return response;
                 }
+
+                DataTable dt = ds.Tables[0];
+
+                // Map DB result to user object
+                if (dt.Columns.Contains("officeaddresses"))
+                {
+                    user.officeaddresses = dt.Rows[0]["officeaddresses"]?.ToString() ?? string.Empty;
+                    user.userloginid = dt.Rows[0]["userloginid"]?.ToString() ?? string.Empty;
+                }
+                else
+                {
+                    user.Name = dt.Rows[0]["name"].ToString();
+                    user.RoleId = Convert.ToInt32(dt.Rows[0]["roleid"]);
+                    user.UserId = Convert.ToInt32(dt.Rows[0]["userid"]);
+                    user.UserLevel = Convert.ToInt32(dt.Rows[0]["userlevel"]);
+                    user.UserLevelId = Convert.ToInt32(dt.Rows[0]["userlevelid"]);
+                    user.Project_Name = dt.Rows[0]["projectname"].ToString();
+                    user.EmailId = dt.Rows[0]["emailid"].ToString();
+                }
+
+                user.employeeid = dt.Rows[0]["employeeid"].ToString();
+                user.LoginName = dt.Rows[0]["loginname"].ToString();
+                user.LoginType = dt.Rows[0]["logintype"].ToString();
+
+                // ✅ Generate JWT token
+                var accessToken = _jwtService.GenerateAccessToken(login.username);
+                var refreshToken = _jwtService.GenerateRefreshToken(login.username, httpResponse.HttpContext.Connection.RemoteIpAddress?.ToString());
+
+
+                string query1 = @"
+                    INSERT INTO UserRefreshTokens (UserId, Token, Expires, Created, CreatedByIp)
+                    VALUES (@UserId, @Token, @Expires, @Created, @Ip)
+                    ON CONFLICT (UserId) 
+                    DO UPDATE SET Token = @Token, Expires = @Expires, Created = @Created, CreatedByIp = @Ip;
+                ";
+
+                var parameters = new Dictionary<string, object>
+            {
+                { "@UserId",login.username },
+                { "@Token", refreshToken.Token },
+                { "@Expires", refreshToken.Expires },
+                { "@Created", refreshToken.Created },
+                { "@Ip", refreshToken.CreatedByIp },
+
+            };
+
+                int effected = _databaseSecureConnectionHelper.ExecuteNonQuery(query1, parameters);
+
+                if(effected < 1)
+                {
+                    return null;
+                }
+
+
+
+
+                // ✅ Set HttpOnly cookie (optional, can keep for security)
+                var cookieOptions = new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = false, // set true in production (HTTPS)
+                    SameSite = SameSiteMode.None,
+                    Expires = DateTime.UtcNow.AddMinutes(5)
+                };
+                httpResponse.Cookies.Append("jwt", accessToken, cookieOptions);
+
+                // ✅ Return user info AND the token in response body
+                response.IsSuccess = true;
+                response.Message = "Success";
+                response.Data = user;
+                //response.Data.Token = token; // add Token property in LoginResponseWeb
+                response.Data.AccessToken = accessToken;
+                response.Data.RefreshToken = refreshToken.Token;
+
+
+                return response;
             }
             catch (Exception ex)
             {
                 response.IsSuccess = false;
-                response.Message = "Invalid Username And Password";
+                response.Message = ex.Message;
                 return response;
             }
         }
+
+
+
         public async Task<ResponseModel<LoginResponse>> LoginAsync(LoginModel login)
         {
             ResponseModel<LoginResponse> response = new ResponseModel<LoginResponse>();
@@ -156,8 +215,8 @@ namespace MdmApi.Repository
             {
                 List<LoginResponseWeb> loginUser = new List<LoginResponseWeb>();
                 LoginResponseWeb user = new LoginResponseWeb();
-                Cryptography _cry = new Cryptography();
-                login.password = _cry.Encrypt(login.password);
+                //Cryptography _cry = new Cryptography();
+                //login.password = _cry.Encrypt(login.password);
                 List<KeyValuePair<string, object>> lstParams = new List<KeyValuePair<string, object>>();
                 lstParams.Add(new KeyValuePair<string, object>("loginuserid", login.username));
                 lstParams.Add(new KeyValuePair<string, object>("pass_word", login.password));
@@ -1437,8 +1496,8 @@ namespace MdmApi.Repository
         {
             try
             {
-                Cryptography _cry = new Cryptography();
-                userLogin.password = _cry.Encrypt(userLogin.password);
+                //Cryptography _cry = new Cryptography();
+                //userLogin.password = _cry.Encrypt(userLogin.password);
                 List<KeyValuePair<string, object>> lstParams = new List<KeyValuePair<string, object>>();
                 lstParams.Add(new KeyValuePair<string, object>("loginuserid", userLogin.loginuserid));
                 lstParams.Add(new KeyValuePair<string, object>("pass_word", userLogin.password));
@@ -1464,8 +1523,228 @@ namespace MdmApi.Repository
         }
 
 
+        public DataSet FetchSecurityQuestionanswers1(string employee_id)
+        {
+            try
+            {
+                List<KeyValuePair<string, object>> lstParams = new List<KeyValuePair<string, object>>();
+
+                lstParams.Add(new KeyValuePair<string, object>("employee_id", employee_id));
+                DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.securityquestionsanswer_fetch1[0], StoredProcedure.securityquestionsanswer_fetch1[1], lstParams);
+                return ds;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        //SecurityQuestionanswers1Validate
+       
+      
+
+    public static string GenerateSecureToken(int length = 12)
+    {
+        // length = number of bytes
+        var randomBytes = new byte[length];
+        using (var rng = RandomNumberGenerator.Create())
+        {
+            rng.GetBytes(randomBytes);
+        }
+        // Convert to Base64 string for easy transport
+        return Convert.ToBase64String(randomBytes);
+    }
 
 
+
+
+
+
+
+
+        public string SecurityQuestionanswers1Validate(SecurityQuestionModel CreateRoleModel)
+        {
+            try
+            {
+                string query = "SELECT * FROM securityquestionsanswers WHERE employeeid = @employeeid AND qno = @qno;";
+
+                var parameters = new Dictionary<string, object>
+        {
+            { "@employeeid", CreateRoleModel.employee_id },
+            { "@qno", CreateRoleModel.q_no }
+        };
+
+                DataSet ds = _databaseSecureConnectionHelper.ExecuteQuery(query, parameters);
+
+                if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                {
+                    var answer = ds.Tables[0].Rows[0]["answer"].ToString();
+
+                    // ✅ Compare user-provided answer
+                    if (answer == CreateRoleModel.answers)
+                    {
+                        var token = GenerateSecureToken();
+                        var expiry = DateTime.UtcNow.AddMinutes(30); // token valid for 30 minutes
+
+                        string query1 = @"
+                    INSERT INTO forgotpasswordtoken (employeeid, token)
+                    VALUES (@employeeid, @token)
+                    ON CONFLICT (employeeid)
+                    DO UPDATE SET token = EXCLUDED.token;";
+
+                        parameters = new Dictionary<string, object>
+                {
+                    { "@employeeid", CreateRoleModel.employee_id },
+                    { "@token", token },
+                };
+
+                        int effected = _databaseSecureConnectionHelper.ExecuteNonQuery(query1, parameters);
+
+                        if (effected > 0)
+                        {
+                            return token; // ✅ return token if saved successfully
+                        }
+                    }
+                }
+
+                return null; // no match or error
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+                return null;
+            }
+        }
+
+        public DataSet UpdatePasswordwithToken(SecurityQuestionModel CreateRoleModel)
+        {
+            try
+            {
+
+
+                //tring query = "SELECT * FROM employeesleaves Where employeeid = @employeeid and (leavefromdate <= @fromdate AND leavetodate >= @todate)";
+                //string query = "SELECT * FROM employeesleaves Where employeeid = @employeeid AND EXISTS( SELECT 1 FROM generate_series(@fromdate::DATE, @todate::DATE, INTERVAL '1 day') AS date_series(given_date) WHERE given_date BETWEEN leavefromdate AND leavetodate)";
+                string query = "select * from forgotpasswordtoken where employeeid = @employeeid";
+
+
+                var parameters = new Dictionary<string, object>
+            {
+                { "@employeeid",CreateRoleModel.employee_id },
+               
+
+            };
+
+                DataSet ds = _databaseSecureConnectionHelper.ExecuteQuery(query, parameters);
+                var answer = ds.Tables[0].Rows[0]["token"].ToString();
+                if (answer == CreateRoleModel.token)
+                {
+
+               
+
+                    string UserLoginID = CreateRoleModel.employee_id;
+                    Cryptography _cry = new Cryptography();
+                    CreateRoleModel.password = _cry.Encrypt(CreateRoleModel.password);
+
+                    string query1 = "update usermaster set password=@passwords where userloginid=@user_id;";
+
+                    parameters = new Dictionary<string, object>
+            {
+                { "@user_id",CreateRoleModel.employee_id },
+                { "@passwords", CreateRoleModel.password },
+
+            };
+
+                    int effected = _databaseSecureConnectionHelper.ExecuteNonQuery(query1, parameters);
+
+
+
+
+
+                }
+                return ds;
+
+
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+
+
+
+        public (string AccessToken, string RefreshToken) Refresh(string refreshToken, string ipAddress)
+        {
+            try
+            {
+                // 1️⃣ Find the refresh token in DB
+                string selectQuery = @"
+            SELECT UserId, Token, Expires, Created, CreatedByIp
+            FROM UserRefreshTokens
+            WHERE Token = @Token";
+
+                var parameters = new Dictionary<string, object>
+        {
+            { "@Token", refreshToken }
+        };
+
+                var ds = _databaseSecureConnectionHelper.ExecuteQuery(selectQuery, parameters);
+                if (ds.Tables[0].Rows.Count == 0)
+                    throw new UnauthorizedAccessException("Invalid or expired refresh token");
+
+                var row = ds.Tables[0].Rows[0];
+                var tokenExpires = Convert.ToDateTime(row["Expires"]);
+                if (tokenExpires < DateTime.UtcNow)
+                    throw new UnauthorizedAccessException("Refresh token expired");
+
+                var userId = row["userid"].ToString();
+
+        //        // 2️⃣ Get user info
+        //        string selectUser = @"select * from usermaster where userloginid = @UserId";
+        //        var userParams = new Dictionary<string, object>
+        //{
+        //    { "@UserId", userId }
+        //};
+
+        //        var userDs = _databaseSecureConnectionHelper.ExecuteQuery(selectUser, userParams);
+        //        if (userDs.Tables[0].Rows.Count == 0)
+        //            throw new UnauthorizedAccessException("User not found");
+
+        //        var username = userDs.Tables[0].Rows[0]["Name"].ToString();
+
+                // 3️⃣ Generate new tokens
+                var newAccessToken = _jwtService.GenerateAccessToken(userId);
+                var newRefreshToken = _jwtService.GenerateRefreshToken(userId, ipAddress);
+
+                // 4️⃣ Update refresh token in DB
+                string updateQuery = @"
+            UPDATE UserRefreshTokens
+            SET Token = @Token,
+                Expires = @Expires,
+                Created = @Created,
+                CreatedByIp = @Ip
+            WHERE UserId = @UserId";
+
+                var updateParams = new Dictionary<string, object>
+        {
+            { "@Token", newRefreshToken.Token },
+            { "@Expires", newRefreshToken.Expires },
+            { "@Created", newRefreshToken.Created },
+            { "@Ip", newRefreshToken.CreatedByIp },
+            { "@UserId", userId }
+        };
+
+                _databaseSecureConnectionHelper.ExecuteNonQuery(updateQuery, updateParams);
+
+                // 5️⃣ Return tokens (back to controller)
+                return (newAccessToken, newRefreshToken.Token);
+            }
+            catch
+            {
+                throw; // let controller handle errors
+            }
+        }
 
 
 

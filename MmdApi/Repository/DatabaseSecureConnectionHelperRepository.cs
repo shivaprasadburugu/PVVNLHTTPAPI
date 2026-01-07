@@ -360,6 +360,35 @@ namespace MdmApi.Repository
 
             return dataSet;
         }
+        public int ExecuteNonQuery(string query, Dictionary<string, object> parameters)
+        {
+            int rowsAffected = 0;
+
+            try
+            {
+                using (NpgsqlConnection conn = new NpgsqlConnection(ConnectionString))
+                {
+                    conn.Open();
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(query, conn))
+                    {
+                        // Add parameters dynamically
+                        foreach (var param in parameters)
+                        {
+                            cmd.Parameters.AddWithValue(param.Key, param.Value ?? DBNull.Value);
+                        }
+
+                        rowsAffected = cmd.ExecuteNonQuery(); // runs INSERT/UPDATE/DELETE
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Database error: " + ex.Message);
+            }
+
+            return rowsAffected;
+        }
+
 
     }
 }

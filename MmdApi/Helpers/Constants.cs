@@ -93,14 +93,16 @@ namespace MdmApi.Helpers
         public static readonly string[] employee_wrokighours_details = { "call employee_wrokighours_details (@fromdate,@todate,@level,@id,@status,@_result_one,@_result_two)", "2" };
         public static readonly string[] daily_details_attendance_report = { "call daily_details_attendance_report(@date,@level,@id,@status,@deptname,@_result_one,@_result_two)", "2" };
         public static readonly string[] zone_wise_contract_attendance= { "call zone_wise_contract_attendance(@fromdate,@level,@id,@_result_one,@_result_two)", "2" };
-
         public static readonly string[] outsource_report = { "call outsource_report(@fromdate,@level,@id,@_result_one,@_result_two)", "2" };
+        public static readonly string[] geo_fence_out_report = { "call geo_fence_out_report(@fromdate,@todate,@level,@id,@loginname,@login_type,@_result_one,@_result_two)", "2" };
+
 
         //security questions
         public static readonly string[] securityquestions_dropdown = { "call securityquestions_dropdown(@_result_one)", "1" };
 
         public static readonly string[] securityquestionsanswer_insert = { "call securityquestionsanswer_insert(@employee_id,@q_no,@answers)", "0" };
         public static readonly string[] securityquestionsanswer_fetch = { "call securityquestionsanswer_fetch(@employee_id,@_result_one,@_result_two)", "2" };
+        public static readonly string[] securityquestionsanswer_fetch1 = { "call securityquestionsanswer_fetch1(@employee_id,@_result_one,@_result_two)", "2" };
 
 
 
@@ -177,6 +179,7 @@ namespace MdmApi.Helpers
         public static readonly string[] substationmaster_fetch = { "Call substationmaster_fetch (@substation_code,@_result_one)", "1" };
         public static readonly string[] substationmaster_update = { "call substationmaster_update(@substation_code,@substation_name,@substation_latitude,@substation_longitude,@jesap_id,@je_name,@je_mobileno,@sdosap_id,@sdo_name,@sdo_mobileno,@eesap_id,@ee_name,@ee_mobileno,@created_by)", "0" };
 
+        public static readonly string[] agencywisedesignation_details = { "call agencywisedesignation_details (@p_agencyname,@p_officetype,@_result_one)", "1" };
 
         //Employee
         public static readonly string[] Employee_Designation = { "call Employee_Designation(@Empid,@_result_one,@_result_two)", "2" };
@@ -195,8 +198,11 @@ namespace MdmApi.Helpers
         public static readonly string[] employeeonduty_delete = { "call employeeonduty_delete (@advance_id,@created_by)", "0" };
         public static readonly string[] employeeadvance_delete = { "call employeeadvance_delete (@advance_id)", "0" };
         public static readonly string[] employee_details_fetch = { "call employee_details_fetch (@empid,@_result_one)", "1" };
+        public static readonly string[] employee_details_fetch_request = { "call employee_details_fetch_request (@empid,@_result_one)", "1" };
         public static readonly string[] contractemployee_details_fetch = { "call contractemployee_details_fetch (@empid,@_result_one)", "1" };
-        public static readonly string[] employee_details_delete = { "call employee_details_delete (@empid)", "0" };
+        public static readonly string[] employee_details_delete = { "call employee_details_delete (@empid,@inserted_by,@role_id)", "0" };
+        public static readonly string[] employee_details_delete_contract = { "call employee_details_delete_contract (@empid,@inserted_by,@role_id,@Reasonof_Removal,@removal_filepath)", "0" };
+
         public static readonly string[] employeequalification_fetch = { "call employeequalification_fetch (@emp_id,@_result_one)", "1" };
         public static readonly string[] employeesleave_fetch = { "call employeesleave_fetch (@leave_id,@_result_one)", "1" };
         public static readonly string[] employeesleave_insert = { "call employeesleave_insert  (@employee_id,@leavetype_name,@leavefrom_date,@leaveto_date,@reasons,@totaldays,@inserted_by,@file_path )", "0" };
@@ -217,14 +223,22 @@ namespace MdmApi.Helpers
 
         public static readonly string[] permanentemployee_details_insert = { "call permanentemployee_details_insert(@employee_id,@first_name,@present_address,@permanent_address," +
                 "@email_address,@previe_pfno,@designation_name,@department_name,@mobile_number,@authentication_mode,@created_by,@level1_code,@level2_code,@level3_code," +
-                "@level4_code,@level5_code,@level6_code)", "0" };
+                "@level4_code,@level5_code,@level6_code,@role_id)", "0" };
 
         public static readonly string[] contractemployee_hierarchy_details_update = { "call contractemployee_hierarchy_details_update(@employee_id,@first_name,@father_name,@designation_name,@department_name,@mobile_number," +
-                "@perment_address,@authentication_mode,@employee_photo,@passwords,@created_by,@level1_code,@level2_code,@level3_code,@level4_code,@level5_code,@level6_code)", "0" };
+                "@perment_address,@authentication_mode,@employee_photo,@passwords,@created_by,@level1_code,@level2_code,@level3_code,@level4_code,@level5_code,@level6_code,@aadhaar_no,@agency_name,@p_category," +
+                "@p_qualification,@gender,@office_type)", "0" };
+
+        public static readonly string[] contractemployee_hierarchy_pending_details_update = { "call contractemployee_hierarchy_pending_details_update(@employee_id,@first_name,@father_name,@designation_name,@department_name,@mobile_number," +
+                "@perment_address,@authentication_mode,@employee_photo,@passwords,@created_by,@level1_code,@level2_code,@level3_code,@level4_code,@level5_code,@level6_code,@aadhaar_no,@agency_name,@p_category," +
+                "@p_qualification,@gender,@office_type,@transfer_letter,@transfer_reason )", "0" };
+
         public static readonly string[] contractemployee_details_update = { "call contractemployee_details_update(@employee_id,@first_name,@father_name,@designation_name,@mobile_number," +
-                "@perment_address,@authentication_mode,@employee_photo,@passwords,@created_by)", "0" };
+                "@perment_address,@authentication_mode,@employee_photo,@passwords,@created_by,@aadhaar_no,@agency_name,@p_category,@p_qualification,@gender,@office_type)", "0" };
+
         public static readonly string[] contractemployee_hierarchy_details_insert = { "call contractemployee_hierarchy_details_insert(@employee_id,@first_name,@father_name,@perment_address,@mobile_number," +
-                "@designation_name,@department_name,@authentication_mode,@created_by,@level1_code,@level2_code,@level3_code,@level4_code,@level5_code,@level6_code)", "0" };
+                "@designation_name,@department_name,@authentication_mode,@created_by,@level1_code,@level2_code,@level3_code,@level4_code,@level5_code,@level6_code,@role_id,@aadhaar_no,@agency_name,@p_category," +
+                "@p_qualification,@gender,@office_type,@Joining_letter,@aadhaarfile_path)", "0" };
         public static readonly string[] employeequalification_insert = { "call employeequalification_insert  (@employee_id,@qualification_name,@universitys,@yearof_passing,@percentageof_marks,@nameofthe_college,@yearof_entering)", "0" };
         public static readonly string[] employeeexperience_insert = { "call employeeexperience_insert  (@employee_id,@nameof_employer,@start_date,@end_date,@designations,@salaryon_leaving,@reasonsfor_leaving)", "0" };
         public static readonly string[] softwareskills_insert = { "call softwareskills_insert  (@employee_id,@languages,@noofyear_experience,@ratingout_of10)", "0" };
@@ -259,7 +273,9 @@ namespace MdmApi.Helpers
 
         public static readonly string[] inactive_contractemployee_list = { "call inactive_contractemployee_list(@level,@eid,@_result_one,@_result_two)", "2" };
         public static readonly string[] employee_details_active = { "call employee_details_active(@empid)", "0" };
-        public static readonly string[] contractemployee_details_active = { "call contractemployee_details_active(@empid)", "0" };
+        public static readonly string[] contractemployee_details_active = { "call contractemployee_details_active(@empid,@status,@reject_reason)", "0" };
+        public static readonly string[] contractemployee_details_activeOnlyemployeeid = { "call contractemployee_details_activeonlyemployeeid(@empid)", "0" };
+
         public static readonly string[] employee_insert = { "call employee_insert (@employeeid,@first_name ,@last_name ,@father_name  ,@mobile_number ,@alternatecontact_number ,@employee_sex ,@dateof_birth,@perment_address ,@present_address ,@email_address  ,@religions ,@noof_children ,@physically_handicapped ,@marital_status ,@blood_group ,@aadhar_number ,@pan_number  ,@passport_number ,@esi_no ,@previ_epfno ,@employeephoto )", "0" };
         public static readonly string[] employee_status_update = { "call employee_status_update(@empid,@statuS,@created_by)", "0" };
         public static readonly string[] employee_details_fetch1 = { "call employee_details_fetch(@empid,@_result_one)", "1" };
@@ -311,6 +327,22 @@ namespace MdmApi.Helpers
         public static readonly string[] officeattendancestatusreport = { "call officeattendancestatusreport(@date,@level,@id,@_result_one,@_result_two)", "2" };
         public static readonly string[] substationattendancestatusreport = { "call substationattendancestatusreport(@date,@level,@id,@_result_one,@_result_two)", "2" };
         public static readonly string[] attendance_zonewise_report = { "call attendance_zonewise_report(@fromdate,@level,@id,@_result_one,@_result_two)", "2" };
+        public static readonly string[] contractemployeemanagement_details_request = { "call contractemployeemanagement_details_request(@level,@id,@_result_one,@_result_two)", "2" };
+        public static readonly string[] employeemanagement_details_request = { "call employeemanagement_details_request(@level,@id,@_result_one,@_result_two)", "2" };
+        public static readonly string[] inactive_contractemployee_list_request = { "call inactive_contractemployee_list_request(@level,@eid,@_result_one,@_result_two)", "2" };
+        public static readonly string[] inactive_employee_list_request = { "call inactive_employee_list_request(@level,@eid,@_result_one,@_result_two)", "2" };
+
+        public static readonly string[] contractemployeemanagement_reject_details = { "call contractemployeemanagement_reject_details(@level,@id,@_result_one,@_result_two)", "2" };
+        public static readonly string[] contractemployee_details_reject_save = { "call contractemployee_details_reject_save(@empid)", "0" };
+        public static readonly string[] contractemployee_hierarchy_details_reject_update = { "call contractemployee_hierarchy_details_reject_update(@employee_id,@first_name,@father_name," +
+                "@designation_name,@department_name,@mobile_number,@perment_address,@authentication_mode,@passwords,@created_by,@level1_code,@level2_code,@level3_code,@level4_code,@level5_code,@level6_code,@aadhaar_no,@agency_name,@p_category," +
+                "@p_qualification,@gender,@office_type,@Joining_letter,@reject_reason,@aadhaar_filepath)", "0" };
+
+        public static readonly string[] pending_contractemployee_hierarchy_details = { "call pending_contractemployee_hierarchy_details(@level,@eid,@_result_one,@_result_two)", "2" };
+
+        public static readonly string[] pending_contractemployee_hierarchy_details_fetch = { "call pending_contractemployee_hierarchy_details_fetch(@empid,@_result_one)","1" };
+
+        public static readonly string[] pending_contractemployee_hierarchy_accept_reject = { "call pending_contractemployee_hierarchy_accept_reject(@empid, @status)","0"};
 
         //Attendance Dashboard
         public static readonly string[] employee_details_attendance = { "call employee_details_attendance(@date,@level,@id,@loginname,@login_type,@_result_one,@_result_two)", "2" };
@@ -386,7 +418,7 @@ namespace MdmApi.Helpers
         public static readonly string[] mobile_touradvance_fromdate = { "call mobile_touradvance_fromdate (@empid,@_result_one)", "1" };
         public static readonly string[] mobile_touradvance_insert = { "call mobile_touradvance_insert (@empid,@managerid,@advance_amount,@tour_formdate,@tour_todate,@places,@purposes,@days,@age)", "0" };
         public static readonly string[] mobile_touradvance_fetch = { "call mobile_touradvance_fetch (@tourid,@_result_one)", "1" };
-        public static readonly string[] mobile_mobilelogs_insert = { "call mobile_mobilelogs_insert (@empid,@attendance_date,@latitude,@longitude,@geo_status,@reason,@inserted_date)", "0" };
+        public static readonly string[] mobile_mobilelogs_insert = { "call mobile_mobilelogs_insert (@empid,@attendance_date,@latitude,@longitude,@geo_status,@reason,@inserted_date,@app_version)", "0" };
         public static readonly string[] mobile_employee_attendance_onclick = { "call mobile_employee_attendance_onclick  (@empid,@att_date,@_result_one)", "1" };
         public static readonly string[] mobile_employee_intime_status = { "call mobile_employee_intime_status  (@empid,@att_date,@_result_one)", "1" };
         public static readonly string[] mobile_pending_approvals = { "call mobile_pending_approvals (@empid,@_result_one,@_result_two,@_result_three,@_result_four,@_result_five)", "5" };
@@ -395,7 +427,10 @@ namespace MdmApi.Helpers
         public static readonly string[] mobile_employeelocation_insert = { "call mobile_employeelocation_insert  (@employee_id,@date_time,@latitudes,@longitudes)", "0" };
         public static readonly string[] tourdetails_total = { "call tourdetails_total (@touradvance_id,@_result_one,@_result_two)", "2" };
         public static readonly string[] mobileapp_update = { "call mobileapp_update(@_result_one)", "1" };
-       
+        //mobile_mobilelogsfailure_insert
+        public static readonly string[] mobile_mobilelogsfailure_insert = { "call mobile_mobilelogsfailure_insert (@empid,@attendance_date,@latitude,@longitude,@geo_status,@reason,@inserted_date,@app_version)", "0" };
+
+
         //EmployeeeDashBoard
         public static readonly string[] employee_dashboard_count = { "call employee_dashboard_count (@empid,@_result_one)", "1" };
         public static readonly string[] employee_leaves_count = { "call employee_leaves_count (@empid,@_result_one)", "1" };

@@ -525,6 +525,23 @@ namespace MdmApi.Controllers
             }
         }
 
+        //DataSet EmployeeOutGeoFenceReport(EmployeeMonthReport employeeMonthReport)
+        [Route("OutGeoFenceReport")]
+        [HttpPost]
+        public async Task<IActionResult> EmployeeOutGeoFenceReport(EmployeeMonthReport employeeMonthReport)
+        {
+            DataSet ds = new DataSet();
+            ds = _reportRepo.EmployeeOutGeoFenceReport(employeeMonthReport);
+            if (ds != null)
+            {
+                return Ok(APIResponse.SendResponse("Success", null, ds));
+            }
+            else
+            {
+                return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
+            }
+        }
+
     }
 
 

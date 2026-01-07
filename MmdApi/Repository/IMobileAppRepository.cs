@@ -49,5 +49,6 @@ namespace MdmApi.Repository
         DataSet FetchMobileConvenyanceDetails(TourDetailsModel tourDetailsModel);
         DataSet FetchMobileMiscelianeousexpensesDetails(TourDetailsModel tourDetailsModel);
         DataSet MobileAppUpdate();
+        DataSet FailedMobileLogs(MobileLog mobileLogs);
     }
 }

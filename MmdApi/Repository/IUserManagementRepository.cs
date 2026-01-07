@@ -6,14 +6,20 @@ using System.Threading.Tasks;
 using MdmApi.DataContext;
 using MdmApi.Models;
 using MdmApi.Web.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace MdmApi.Repository
 {
     public interface IUserManagementRepository
     {
         Task<ResponseModel<LoginResponse>> LoginAsync(LoginModel login);
-        Task<ResponseModel<LoginResponseWeb>> LoginAsyncweb(LoginModelWeb login);
-        
+       // Task<ResponseModel<LoginResponseWeb>> LoginAsyncweb(LoginModelWeb login);
+
+        Task<ResponseModel<LoginResponseWeb>> LoginAsyncweb(LoginModelWeb login, HttpResponse httpResponse);
+
+
+
+
         Task<ResponseModel<LoginResponseWeb>> userloginofficeaddress(LoginModelWeb login);
 
         //EmployeeLoginAsync
@@ -71,5 +77,12 @@ namespace MdmApi.Repository
         Task<MobileResponseModel<MobileNavBarResponse>> GetNavForMobileEditRole(int roleId);
 
         DataSet fetchhierarchylevellogin(UserLogin userLogin);
+        DataSet FetchSecurityQuestionanswers1(string employee_id);
+        string SecurityQuestionanswers1Validate(SecurityQuestionModel CreateRoleModel);
+        DataSet UpdatePasswordwithToken(SecurityQuestionModel CreateRoleModel);
+
+        (string AccessToken, string RefreshToken) Refresh(string refreshToken, string ipAddress);
+
     }
+
 }

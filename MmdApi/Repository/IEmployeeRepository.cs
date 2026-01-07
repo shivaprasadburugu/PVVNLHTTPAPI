@@ -14,6 +14,7 @@ namespace MdmApi.Repository
         DataSet GetReportingManagerDetails(string Employeeid);
         //GetEmployeeDetails
         DataSet GetEmployeeDetails(string Employeeid);
+        DataSet FetchPendingEmployeeDetails(string Employeeid);
         DataSet GetContractEmployeeDetails(string Employeeid);
         
         DataSet InsertUpdateEmployeeAdvance(EmployeeAdvanceString employeeAdvance);
@@ -35,6 +36,7 @@ namespace MdmApi.Repository
         DataSet DeleteEmployeeAdvanceDetails(int advid);
         //DeleteEmployeeDetails
         DataSet DeleteEmployeeDetails(EmployeeModel employeeModel);
+        DataSet ContractEmployeeDetailsDelete(EmployeeModel employeeModel);
         //FetchEmployeeQualifiaction
         DataSet FetchEmployeeQualifiaction(EmployeeModel employeeModel);
         //FetchEmployeeLeaveDetails
@@ -52,7 +54,12 @@ namespace MdmApi.Repository
         DataSet InsertPermanentEmployeeDetails(EmployeeDetailsModel EmployeeDetailsModel);
         //InsertPermanentEmployeeDetails
         DataSet ContractPermanentEmployeeDetails(ContractEmployeeDetailsModel ContractEmployeeDetailsModel);
-        DataSet UpdateContractEmployeeDetails(ContractEmployeeDetailsModel ContractEmployeeDetailsModel);
+
+        DataSet UpdateContractEmployeeDetails(contractempHierarchy contractempHierarchyModel);
+
+        DataSet UpdateContractEmployeePendingDetails(contractempPendingHierarchy contractempPendingHierarchyModel);
+
+        
         DataSet UpdateContractEmployeeDetailsWithouthierarchy(ContractEmployeeDetailsModel ContractEmployeeDetailsModel);
         
         List<EmployeeQualification> InsertEmployeeQualification(List<EmployeeQualification> employeeQualifications);
@@ -126,6 +133,8 @@ namespace MdmApi.Repository
         DataSet  ContractEmployeeDetailsInactiveFetch(Status status);
         DataSet ActivateEmployeeDetails(Status status);
         DataSet ActivateContractEmployee(Status staus);
+        //OnlyEmpId
+        DataSet ActivateContractEmployeeOnlyEmpId(Status staus);
         DataSet FetchLeaveByEmployeeIDForManual(LeaveFromDate manageEmployeeLeave);
         DataSet FetchEmployeeInTime(LeaveFromDate leaveFromDate);
 
@@ -137,7 +146,19 @@ namespace MdmApi.Repository
         DataSet FetchEmployeeWeekOffWithEmployeeid(weekOff weekoff);
         DataSet UpdateEmployeeWeekOff(weekOff weekoff);
         DataSet FetchEmployeeWeekOffWithDayId(weekOff weekoff);
-        
+        void BulkUpdateEmployees(List<EmployeeActionDto> employees, string insertedBy);
+
+        DataSet EmployeemanagementDetailsPending(DesignationWiseData manageEmployeeLeave);
+        DataSet ContratualEmployeemanagementDetailsPending(DesignationWiseData manageEmployeeLeave);
+
+        DataSet InActiveContratualEmployeemanagementDetailsPending(DesignationWiseData manageEmployeeLeave);
+        DataSet InActiveEmployeemanagementDetailsPending(DesignationWiseData manageEmployeeLeave);
+
+        DataSet EmployeemanagementDetailsRejected(DesignationWiseData manageEmployeeLeave);
+        DataSet UpdtaeContractEmployeeRejectedDetails(ContractEmployeeDetailsModel ContractEmployeeDetailsModel);
+        DataSet ContractualEmployeesTransferPendings(Level_LevelIdModel Level_LevelId);
+        DataSet FetchContractEmployeeDetailsWithBothHierarchy(EmployeeIdModel employeeidModel);
+        DataSet PendingContractEmployeesAcceptReject(ContractEmpStatus CtrEmpStatus);
 
 
 

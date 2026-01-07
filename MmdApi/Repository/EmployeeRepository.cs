@@ -2,7 +2,10 @@
 using MdmApi.Helpers;
 using MdmApi.Models;
 using MdmApi.Web.Models;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -17,13 +20,19 @@ namespace MdmApi.Repository
         private readonly ContextDb _context;
         private readonly ServiceConfiguration _appSettings;
         private readonly IDatabaseSecureConnectionHelperRepository _databaseSecureConnectionHelper;
+        public readonly IConfiguration _configuration;
+        public string ConnectionString { get; set; }
+       
 
-        public EmployeeRepository(ContextDb context,
+        public EmployeeRepository(ContextDb context, IConfiguration configuration,
            IOptions<ServiceConfiguration> settings, IDatabaseSecureConnectionHelperRepository databaseSecureConnectionHelper)
         {
             _context = context;
             _appSettings = settings.Value;
             _databaseSecureConnectionHelper = databaseSecureConnectionHelper;
+            _configuration = configuration;
+            ConnectionString = _configuration.GetConnectionString("AttendanceConnection");
+
         }
 
         public DataSet GetEmployeeDesignation(string employeeid)
@@ -63,6 +72,22 @@ namespace MdmApi.Repository
                 List<KeyValuePair<string, object>> lstParams = new List<KeyValuePair<string, object>>();
                 lstParams.Add(new KeyValuePair<string, object>("empid", EmployeeId));
                 DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.employee_details_fetch[0], StoredProcedure.employee_details_fetch[1], lstParams);
+                return ds;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+
+        public DataSet FetchPendingEmployeeDetails(string EmployeeId)
+        {
+            try
+            {
+                List<KeyValuePair<string, object>> lstParams = new List<KeyValuePair<string, object>>();
+                lstParams.Add(new KeyValuePair<string, object>("empid", EmployeeId));
+                DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.employee_details_fetch_request[0], StoredProcedure.employee_details_fetch_request[1], lstParams);
                 return ds;
             }
             catch (Exception ex)
@@ -389,6 +414,9 @@ namespace MdmApi.Repository
             {
                 List<KeyValuePair<string, object>> lstParams = new List<KeyValuePair<string, object>>();
                 lstParams.Add(new KeyValuePair<string, object>("empid", employeeModel.employeeid));
+                lstParams.Add(new KeyValuePair<string, object>("inserted_by", employeeModel.inserted_by));
+                lstParams.Add(new KeyValuePair<string, object>("role_id", employeeModel.role_id));
+
                 DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.employee_details_delete[0], StoredProcedure.employee_details_delete[1], lstParams);
                 return ds;
             }
@@ -397,6 +425,27 @@ namespace MdmApi.Repository
                 return null;
             }
         }
+
+        public DataSet ContractEmployeeDetailsDelete(EmployeeModel employeeModel)
+        {
+            try
+            {
+                List<KeyValuePair<string, object>> lstParams = new List<KeyValuePair<string, object>>();
+                lstParams.Add(new KeyValuePair<string, object>("empid", employeeModel.employeeid));
+                lstParams.Add(new KeyValuePair<string, object>("inserted_by", employeeModel.inserted_by));
+                lstParams.Add(new KeyValuePair<string, object>("role_id", employeeModel.role_id));
+                lstParams.Add(new KeyValuePair<string, object>("Reasonof_Removal", employeeModel.reasonofremoval));
+                lstParams.Add(new KeyValuePair<string, object>("removal_filepath", employeeModel.suspenssionfile));
+
+                DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.employee_details_delete_contract[0], StoredProcedure.employee_details_delete_contract[1], lstParams);
+                return ds;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
 
         public DataSet FetchEmployeeQualifiaction(EmployeeModel employeeModel)
         {
@@ -638,6 +687,7 @@ namespace MdmApi.Repository
                 lstParams.Add(new KeyValuePair<string, object>("level4_code", string.IsNullOrEmpty(EmployeeDetailsModel.level4name) ? (object)DBNull.Value : EmployeeDetailsModel.level4name));
                 lstParams.Add(new KeyValuePair<string, object>("level5_code", string.IsNullOrEmpty(EmployeeDetailsModel.level5name) ? (object)DBNull.Value : EmployeeDetailsModel.level5name));
                 lstParams.Add(new KeyValuePair<string, object>("level6_code", string.IsNullOrEmpty(EmployeeDetailsModel.level6name) ? (object)DBNull.Value : EmployeeDetailsModel.level6name));
+                lstParams.Add(new KeyValuePair<string, object>("role_id", EmployeeDetailsModel.roleid));
 
                 DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.permanentemployee_details_insert[0], StoredProcedure.permanentemployee_details_insert[1], lstParams);
                 return ds;
@@ -668,6 +718,19 @@ namespace MdmApi.Repository
                 lstParams.Add(new KeyValuePair<string, object>("level5_code", string.IsNullOrEmpty(ContractEmployeeDetailsModel.level5name) ? (object)DBNull.Value : ContractEmployeeDetailsModel.level5name));
                 lstParams.Add(new KeyValuePair<string, object>("level6_code", string.IsNullOrEmpty(ContractEmployeeDetailsModel.level6name) ? (object)DBNull.Value : ContractEmployeeDetailsModel.level6name));
                 lstParams.Add(new KeyValuePair<string, object>("created_by", ContractEmployeeDetailsModel.created_by != null ? ContractEmployeeDetailsModel.created_by : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("role_id", ContractEmployeeDetailsModel.roleid));
+                lstParams.Add(new KeyValuePair<string, object>("aadhaar_no", ContractEmployeeDetailsModel.AadharNo != null ? ContractEmployeeDetailsModel.AadharNo : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("agency_name", ContractEmployeeDetailsModel.agencyname != null ? ContractEmployeeDetailsModel.agencyname : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("p_category", ContractEmployeeDetailsModel.category != null ? ContractEmployeeDetailsModel.category : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("p_qualification", ContractEmployeeDetailsModel.qualification != null ? ContractEmployeeDetailsModel.qualification : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("gender", ContractEmployeeDetailsModel.gender != null ? ContractEmployeeDetailsModel.gender : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("office_type", ContractEmployeeDetailsModel.officetype != null ? ContractEmployeeDetailsModel.officetype : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("Joining_letter", ContractEmployeeDetailsModel.joininglatterpath != null ? ContractEmployeeDetailsModel.joininglatterpath : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("aadhaarfile_path", ContractEmployeeDetailsModel.aadharpath != null ? ContractEmployeeDetailsModel.aadharpath : DBNull.Value.ToString()));
+
+
+
+
                 DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.contractemployee_hierarchy_details_insert[0], StoredProcedure.contractemployee_hierarchy_details_insert[1], lstParams);
                 return ds;
             }
@@ -691,9 +754,13 @@ namespace MdmApi.Repository
                 lstParams.Add(new KeyValuePair<string, object>("authentication_mode", ContractEmployeeDetailsModel.authentication_mode ?? (object)DBNull.Value));
                 lstParams.Add(new KeyValuePair<string, object>("employee_photo", ContractEmployeeDetailsModel.employee_photo ?? (object)DBNull.Value));
                 lstParams.Add(new KeyValuePair<string, object>("passwords", string.IsNullOrEmpty(ContractEmployeeDetailsModel.password) ? (object)DBNull.Value : ContractEmployeeDetailsModel.password));
-               // lstParams.Add(new KeyValuePair<string, object>("passwords", string.IsNullOrEmpty(ContractEmployeeDetailsModel.password) ? (object)DBNull.Value : ContractEmployeeDetailsModel.password));
-//
                 lstParams.Add(new KeyValuePair<string, object>("created_by", ContractEmployeeDetailsModel.created_by != null ? ContractEmployeeDetailsModel.created_by : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("aadhaar_no", ContractEmployeeDetailsModel.AadharNo != null ? ContractEmployeeDetailsModel.AadharNo : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("agency_name", ContractEmployeeDetailsModel.agencyname != null ? ContractEmployeeDetailsModel.agencyname : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("p_category", ContractEmployeeDetailsModel.category != null ? ContractEmployeeDetailsModel.category : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("p_qualification", ContractEmployeeDetailsModel.qualification != null ? ContractEmployeeDetailsModel.qualification : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("gender", ContractEmployeeDetailsModel.gender != null ? ContractEmployeeDetailsModel.gender : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("office_type", ContractEmployeeDetailsModel.officetype != null ? ContractEmployeeDetailsModel.officetype : DBNull.Value.ToString()));
                 DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.contractemployee_details_update[0], StoredProcedure.contractemployee_details_update[1], lstParams);
                 return ds;
             }
@@ -702,28 +769,37 @@ namespace MdmApi.Repository
                 return null;
             }
         }
-        public DataSet UpdateContractEmployeeDetails(ContractEmployeeDetailsModel ContractEmployeeDetailsModel)
+        public DataSet UpdateContractEmployeeDetails(contractempHierarchy contractempHierarchyModel)
         {
             try
             {
                 List<KeyValuePair<string, object>> lstParams = new List<KeyValuePair<string, object>>();
-                lstParams.Add(new KeyValuePair<string, object>("employee_id", ContractEmployeeDetailsModel.employeeid));
-                lstParams.Add(new KeyValuePair<string, object>("first_name", ContractEmployeeDetailsModel.first_name));
-                lstParams.Add(new KeyValuePair<string, object>("father_name", ContractEmployeeDetailsModel.father_name != null ? ContractEmployeeDetailsModel.father_name : DBNull.Value.ToString()));
-                lstParams.Add(new KeyValuePair<string, object>("mobile_number", ContractEmployeeDetailsModel.mobile_number != null ? ContractEmployeeDetailsModel.mobile_number : DBNull.Value.ToString()));
-                lstParams.Add(new KeyValuePair<string, object>("perment_address", ContractEmployeeDetailsModel.perment_address != null ? ContractEmployeeDetailsModel.perment_address : DBNull.Value.ToString()));
-                lstParams.Add(new KeyValuePair<string, object>("designation_name", ContractEmployeeDetailsModel.designation_name != null ? ContractEmployeeDetailsModel.designation_name : DBNull.Value.ToString()));
-                lstParams.Add(new KeyValuePair<string, object>("department_name", ContractEmployeeDetailsModel.department != null ? ContractEmployeeDetailsModel.department : DBNull.Value.ToString()));
-                lstParams.Add(new KeyValuePair<string, object>("authentication_mode", ContractEmployeeDetailsModel.authentication_mode ?? (object)DBNull.Value));
-                lstParams.Add(new KeyValuePair<string, object>("employee_photo", ContractEmployeeDetailsModel.employee_photo ?? (object)DBNull.Value));
-                lstParams.Add(new KeyValuePair<string, object>("passwords", string.IsNullOrEmpty(ContractEmployeeDetailsModel.password) ? (object)DBNull.Value : ContractEmployeeDetailsModel.password));
-                lstParams.Add(new KeyValuePair<string, object>("level1_code", string.IsNullOrEmpty(ContractEmployeeDetailsModel.level1name) ? (object)DBNull.Value : ContractEmployeeDetailsModel.level1name));
-                lstParams.Add(new KeyValuePair<string, object>("level2_code", string.IsNullOrEmpty(ContractEmployeeDetailsModel.level2name) ? (object)DBNull.Value : ContractEmployeeDetailsModel.level2name));
-                lstParams.Add(new KeyValuePair<string, object>("level3_code", string.IsNullOrEmpty(ContractEmployeeDetailsModel.level3name) ? (object)DBNull.Value : ContractEmployeeDetailsModel.level3name));
-                lstParams.Add(new KeyValuePair<string, object>("level4_code", string.IsNullOrEmpty(ContractEmployeeDetailsModel.level4name) ? (object)DBNull.Value : ContractEmployeeDetailsModel.level4name));
-                lstParams.Add(new KeyValuePair<string, object>("level5_code", string.IsNullOrEmpty(ContractEmployeeDetailsModel.level5name) ? (object)DBNull.Value : ContractEmployeeDetailsModel.level5name));
-                lstParams.Add(new KeyValuePair<string, object>("level6_code", string.IsNullOrEmpty(ContractEmployeeDetailsModel.level6name) ? (object)DBNull.Value : ContractEmployeeDetailsModel.level6name));
-                lstParams.Add(new KeyValuePair<string, object>("created_by", ContractEmployeeDetailsModel.created_by != null ? ContractEmployeeDetailsModel.created_by : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("employee_id", contractempHierarchyModel.employeeid));
+                lstParams.Add(new KeyValuePair<string, object>("first_name", contractempHierarchyModel.first_name));
+                lstParams.Add(new KeyValuePair<string, object>("father_name", contractempHierarchyModel.father_name != null ? contractempHierarchyModel.father_name : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("mobile_number", contractempHierarchyModel.mobile_number != null ? contractempHierarchyModel.mobile_number : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("perment_address", contractempHierarchyModel.perment_address != null ? contractempHierarchyModel.perment_address : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("designation_name", contractempHierarchyModel.designation_name != null ? contractempHierarchyModel.designation_name : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("department_name", contractempHierarchyModel.department != null ? contractempHierarchyModel.department : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("authentication_mode", contractempHierarchyModel.authentication_mode ?? (object)DBNull.Value));
+                lstParams.Add(new KeyValuePair<string, object>("employee_photo", contractempHierarchyModel.employee_photo ?? (object)DBNull.Value));
+                lstParams.Add(new KeyValuePair<string, object>("passwords", string.IsNullOrEmpty(contractempHierarchyModel.password) ? (object)DBNull.Value : contractempHierarchyModel.password));
+                lstParams.Add(new KeyValuePair<string, object>("level1_code", string.IsNullOrEmpty(contractempHierarchyModel.level1name) ? (object)DBNull.Value : contractempHierarchyModel.level1name));
+                lstParams.Add(new KeyValuePair<string, object>("level2_code", string.IsNullOrEmpty(contractempHierarchyModel.level2name) ? (object)DBNull.Value : contractempHierarchyModel.level2name));
+                lstParams.Add(new KeyValuePair<string, object>("level3_code", string.IsNullOrEmpty(contractempHierarchyModel.level3name) ? (object)DBNull.Value : contractempHierarchyModel.level3name));
+                lstParams.Add(new KeyValuePair<string, object>("level4_code", string.IsNullOrEmpty(contractempHierarchyModel.level4name) ? (object)DBNull.Value : contractempHierarchyModel.level4name));
+                lstParams.Add(new KeyValuePair<string, object>("level5_code", string.IsNullOrEmpty(contractempHierarchyModel.level5name) ? (object)DBNull.Value : contractempHierarchyModel.level5name));
+                lstParams.Add(new KeyValuePair<string, object>("level6_code", string.IsNullOrEmpty(contractempHierarchyModel.level6name) ? (object)DBNull.Value : contractempHierarchyModel.level6name));
+                lstParams.Add(new KeyValuePair<string, object>("created_by", contractempHierarchyModel.created_by != null ? contractempHierarchyModel.created_by : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("aadhaar_no", contractempHierarchyModel.AadharNo != null ? contractempHierarchyModel.AadharNo : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("agency_name", contractempHierarchyModel.agencyname != null ? contractempHierarchyModel.agencyname : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("p_category", contractempHierarchyModel.category != null ? contractempHierarchyModel.category : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("p_qualification", contractempHierarchyModel.qualification != null ? contractempHierarchyModel.qualification : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("gender", contractempHierarchyModel.gender != null ? contractempHierarchyModel.gender : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("office_type", contractempHierarchyModel.officetype != null ? contractempHierarchyModel.officetype : DBNull.Value.ToString()));
+                //transfer_letter
+                //lstParams.Add(new KeyValuePair<string, object>("transfer_letter", contractempHierarchyModel.transferpath != null ? contractempHierarchyModel.transferpath : DBNull.Value.ToString()));
+
                 DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.contractemployee_hierarchy_details_update[0], StoredProcedure.contractemployee_hierarchy_details_update[1], lstParams);
                 return ds;
             }
@@ -732,7 +808,47 @@ namespace MdmApi.Repository
                 return null;
             }
         }
+        
 
+        public DataSet UpdateContractEmployeePendingDetails(contractempPendingHierarchy contractempPendingHierarchyModel)
+        {
+            try
+            {
+                List<KeyValuePair<string, object>> lstParams = new List<KeyValuePair<string, object>>();
+                lstParams.Add(new KeyValuePair<string, object>("employee_id", contractempPendingHierarchyModel.employeeid));
+                lstParams.Add(new KeyValuePair<string, object>("first_name", contractempPendingHierarchyModel.first_name));
+                lstParams.Add(new KeyValuePair<string, object>("father_name", contractempPendingHierarchyModel.father_name != null ? contractempPendingHierarchyModel.father_name : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("designation_name", contractempPendingHierarchyModel.designation_name != null ? contractempPendingHierarchyModel.designation_name : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("department_name", contractempPendingHierarchyModel.department != null ? contractempPendingHierarchyModel.department : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("mobile_number", contractempPendingHierarchyModel.mobile_number != null ? contractempPendingHierarchyModel.mobile_number : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("perment_address", contractempPendingHierarchyModel.perment_address != null ? contractempPendingHierarchyModel.perment_address : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("authentication_mode", contractempPendingHierarchyModel.authentication_mode ?? (object)DBNull.Value));
+                lstParams.Add(new KeyValuePair<string, object>("employee_photo", contractempPendingHierarchyModel.employee_photo ?? (object)DBNull.Value));
+                lstParams.Add(new KeyValuePair<string, object>("passwords", string.IsNullOrEmpty(contractempPendingHierarchyModel.password) ? (object)DBNull.Value : contractempPendingHierarchyModel.password));
+                lstParams.Add(new KeyValuePair<string, object>("created_by", contractempPendingHierarchyModel.created_by != null ? contractempPendingHierarchyModel.created_by : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("level1_code", string.IsNullOrEmpty(contractempPendingHierarchyModel.level1name) ? (object)DBNull.Value : contractempPendingHierarchyModel.level1name));
+                lstParams.Add(new KeyValuePair<string, object>("level2_code", string.IsNullOrEmpty(contractempPendingHierarchyModel.level2name) ? (object)DBNull.Value : contractempPendingHierarchyModel.level2name));
+                lstParams.Add(new KeyValuePair<string, object>("level3_code", string.IsNullOrEmpty(contractempPendingHierarchyModel.level3name) ? (object)DBNull.Value : contractempPendingHierarchyModel.level3name));
+                lstParams.Add(new KeyValuePair<string, object>("level4_code", string.IsNullOrEmpty(contractempPendingHierarchyModel.level4name) ? (object)DBNull.Value : contractempPendingHierarchyModel.level4name));
+                lstParams.Add(new KeyValuePair<string, object>("level5_code", string.IsNullOrEmpty(contractempPendingHierarchyModel.level5name) ? (object)DBNull.Value : contractempPendingHierarchyModel.level5name));
+                lstParams.Add(new KeyValuePair<string, object>("level6_code", string.IsNullOrEmpty(contractempPendingHierarchyModel.level6name) ? (object)DBNull.Value : contractempPendingHierarchyModel.level6name));             
+                lstParams.Add(new KeyValuePair<string, object>("aadhaar_no", contractempPendingHierarchyModel.AadharNo != null ? contractempPendingHierarchyModel.AadharNo : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("agency_name", contractempPendingHierarchyModel.agencyname != null ? contractempPendingHierarchyModel.agencyname : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("p_category", contractempPendingHierarchyModel.category != null ? contractempPendingHierarchyModel.category : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("p_qualification", contractempPendingHierarchyModel.qualification != null ? contractempPendingHierarchyModel.qualification : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("gender", contractempPendingHierarchyModel.gender != null ? contractempPendingHierarchyModel.gender : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("office_type", contractempPendingHierarchyModel.officetype != null ? contractempPendingHierarchyModel.officetype : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("transfer_letter", contractempPendingHierarchyModel.transferpath != null ? contractempPendingHierarchyModel.transferpath : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("transfer_reason", contractempPendingHierarchyModel.transfer_reason != null ? contractempPendingHierarchyModel.transfer_reason : DBNull.Value.ToString()));
+
+                DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.contractemployee_hierarchy_pending_details_update[0], StoredProcedure.contractemployee_hierarchy_pending_details_update[1], lstParams);
+                return ds;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
         public List<EmployeeQualification> InsertEmployeeQualification(List<EmployeeQualification> employeeQualifications)
         {
             List<EmployeeQualification> targetList = employeeQualifications.Select(item2 =>
@@ -1939,7 +2055,24 @@ namespace MdmApi.Repository
             {
                 List<KeyValuePair<string, object>> lstParams = new List<KeyValuePair<string, object>>();
                 lstParams.Add(new KeyValuePair<string, object>("empid", status.empid));
+                lstParams.Add(new KeyValuePair<string, object>("status", status.status));
+                lstParams.Add(new KeyValuePair<string, object>("reject_reason", status.rejectreason));
                 DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.contractemployee_details_active[0], StoredProcedure.contractemployee_details_active[1], lstParams);
+                return ds;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+        public DataSet ActivateContractEmployeeOnlyEmpId(Status status)
+        {
+            try
+            {
+                List<KeyValuePair<string, object>> lstParams = new List<KeyValuePair<string, object>>();
+                lstParams.Add(new KeyValuePair<string, object>("empid", status.empid));
+                
+                DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.contractemployee_details_activeOnlyemployeeid[0], StoredProcedure.contractemployee_details_activeOnlyemployeeid[1], lstParams);
                 return ds;
             }
             catch (Exception ex)
@@ -2213,7 +2346,204 @@ namespace MdmApi.Repository
 
 
         }
-        
+        public void BulkUpdateEmployees(List<EmployeeActionDto> employees, string insertedBy)
+        {
+            if (employees == null || employees.Count == 0)
+                throw new ArgumentException("No employees provided");
+
+            using (var conn = new NpgsqlConnection(ConnectionString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand("CALL attendancestatusupdate(@p_input, @inserted_by)", conn))
+                {
+                    // Convert list to JSON
+                    var json = JsonConvert.SerializeObject(employees);
+
+                    // Add parameters
+                    cmd.Parameters.AddWithValue("p_input", NpgsqlTypes.NpgsqlDbType.Jsonb, json);
+                    cmd.Parameters.AddWithValue("inserted_by", insertedBy);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+        public DataSet EmployeemanagementDetailsPending(DesignationWiseData manageEmployeeLeave)
+        {
+
+            try
+            {
+                List<KeyValuePair<string, object>> lstParams = new List<KeyValuePair<string, object>>();
+               // lstParams.Add(new KeyValuePair<string, object>("des_name", manageEmployeeLeave.designation));
+                lstParams.Add(new KeyValuePair<string, object>("level", manageEmployeeLeave.level));
+                lstParams.Add(new KeyValuePair<string, object>("id", manageEmployeeLeave.levelid));
+                DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.employeemanagement_details_request[0], StoredProcedure.employeemanagement_details_request[1], lstParams);
+                return ds;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+        public DataSet ContratualEmployeemanagementDetailsPending(DesignationWiseData manageEmployeeLeave)
+        {
+
+            try
+            {
+                List<KeyValuePair<string, object>> lstParams = new List<KeyValuePair<string, object>>();
+                lstParams.Add(new KeyValuePair<string, object>("level", manageEmployeeLeave.level));
+                lstParams.Add(new KeyValuePair<string, object>("id", manageEmployeeLeave.levelid));
+                DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.contractemployeemanagement_details_request[0], StoredProcedure.contractemployeemanagement_details_request[1], lstParams);
+                return ds;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+        public DataSet InActiveContratualEmployeemanagementDetailsPending(DesignationWiseData manageEmployeeLeave)
+        {
+
+            try
+            {
+                List<KeyValuePair<string, object>> lstParams = new List<KeyValuePair<string, object>>();
+                lstParams.Add(new KeyValuePair<string, object>("level", manageEmployeeLeave.level));
+                lstParams.Add(new KeyValuePair<string, object>("eid", manageEmployeeLeave.levelid));
+                DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.inactive_contractemployee_list_request[0], StoredProcedure.inactive_contractemployee_list_request[1], lstParams);
+                return ds;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+        public DataSet InActiveEmployeemanagementDetailsPending(DesignationWiseData manageEmployeeLeave)
+        {
+
+            try
+            {
+                List<KeyValuePair<string, object>> lstParams = new List<KeyValuePair<string, object>>();
+                lstParams.Add(new KeyValuePair<string, object>("level", manageEmployeeLeave.level));
+                lstParams.Add(new KeyValuePair<string, object>("eid", manageEmployeeLeave.levelid));
+                DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.inactive_employee_list_request[0], StoredProcedure.inactive_employee_list_request[1], lstParams);
+                return ds;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+
+        public DataSet EmployeemanagementDetailsRejected(DesignationWiseData manageEmployeeLeave)
+        {
+
+            try
+            {
+                List<KeyValuePair<string, object>> lstParams = new List<KeyValuePair<string, object>>();
+                // lstParams.Add(new KeyValuePair<string, object>("des_name", manageEmployeeLeave.designation));
+                lstParams.Add(new KeyValuePair<string, object>("level", manageEmployeeLeave.level));
+                lstParams.Add(new KeyValuePair<string, object>("id", manageEmployeeLeave.levelid));
+                DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.contractemployeemanagement_reject_details[0], StoredProcedure.contractemployeemanagement_reject_details[1], lstParams);
+                return ds;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public DataSet UpdtaeContractEmployeeRejectedDetails(ContractEmployeeDetailsModel ContractEmployeeDetailsModel)
+        {
+            try
+            {
+                List<KeyValuePair<string, object>> lstParams = new List<KeyValuePair<string, object>>();
+                lstParams.Add(new KeyValuePair<string, object>("employee_id", ContractEmployeeDetailsModel.employeeid));
+                lstParams.Add(new KeyValuePair<string, object>("first_name", ContractEmployeeDetailsModel.first_name));
+                lstParams.Add(new KeyValuePair<string, object>("father_name", ContractEmployeeDetailsModel.father_name != null ? ContractEmployeeDetailsModel.father_name : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("designation_name", ContractEmployeeDetailsModel.designation_name != null ? ContractEmployeeDetailsModel.designation_name : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("department_name", ContractEmployeeDetailsModel.department != null ? ContractEmployeeDetailsModel.department : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("mobile_number", ContractEmployeeDetailsModel.mobile_number != null ? ContractEmployeeDetailsModel.mobile_number : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("perment_address", ContractEmployeeDetailsModel.perment_address != null ? ContractEmployeeDetailsModel.perment_address : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("authentication_mode", ContractEmployeeDetailsModel.authentication_mode ?? (object)DBNull.Value));
+                lstParams.Add(new KeyValuePair<string, object>("level1_code", string.IsNullOrEmpty(ContractEmployeeDetailsModel.level1name) ? (object)DBNull.Value : ContractEmployeeDetailsModel.level1name));
+                lstParams.Add(new KeyValuePair<string, object>("level2_code", string.IsNullOrEmpty(ContractEmployeeDetailsModel.level2name) ? (object)DBNull.Value : ContractEmployeeDetailsModel.level2name));
+                lstParams.Add(new KeyValuePair<string, object>("level3_code", string.IsNullOrEmpty(ContractEmployeeDetailsModel.level3name) ? (object)DBNull.Value : ContractEmployeeDetailsModel.level3name));
+                lstParams.Add(new KeyValuePair<string, object>("level4_code", string.IsNullOrEmpty(ContractEmployeeDetailsModel.level4name) ? (object)DBNull.Value : ContractEmployeeDetailsModel.level4name));
+                lstParams.Add(new KeyValuePair<string, object>("level5_code", string.IsNullOrEmpty(ContractEmployeeDetailsModel.level5name) ? (object)DBNull.Value : ContractEmployeeDetailsModel.level5name));
+                lstParams.Add(new KeyValuePair<string, object>("level6_code", string.IsNullOrEmpty(ContractEmployeeDetailsModel.level6name) ? (object)DBNull.Value : ContractEmployeeDetailsModel.level6name));
+                lstParams.Add(new KeyValuePair<string, object>("created_by", ContractEmployeeDetailsModel.created_by != null ? ContractEmployeeDetailsModel.created_by : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("passwords", ContractEmployeeDetailsModel.passwords != null ? ContractEmployeeDetailsModel.passwords : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("aadhaar_no", ContractEmployeeDetailsModel.AadharNo != null ? ContractEmployeeDetailsModel.AadharNo : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("agency_name", ContractEmployeeDetailsModel.agencyname != null ? ContractEmployeeDetailsModel.agencyname : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("p_category", ContractEmployeeDetailsModel.category != null ? ContractEmployeeDetailsModel.category : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("p_qualification", ContractEmployeeDetailsModel.qualification != null ? ContractEmployeeDetailsModel.qualification : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("gender", ContractEmployeeDetailsModel.gender != null ? ContractEmployeeDetailsModel.gender : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("office_type", ContractEmployeeDetailsModel.officetype != null ? ContractEmployeeDetailsModel.officetype : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("Joining_letter", ContractEmployeeDetailsModel.joininglatterpath != null ? ContractEmployeeDetailsModel.joininglatterpath : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("aadhaar_filepath", ContractEmployeeDetailsModel.aadharpath != null ? ContractEmployeeDetailsModel.aadharpath : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("reject_reason", ContractEmployeeDetailsModel.rejectreason != null ? ContractEmployeeDetailsModel.rejectreason : DBNull.Value.ToString()));
+
+
+
+
+                DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.contractemployee_hierarchy_details_reject_update[0], StoredProcedure.contractemployee_hierarchy_details_reject_update[1], lstParams);
+                return ds;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public DataSet ContractualEmployeesTransferPendings(Level_LevelIdModel Level_LevelId)
+        {
+            try
+            {
+                List<KeyValuePair<string, object>> lstParams = new List<KeyValuePair<string, object>>();
+                lstParams.Add(new KeyValuePair<string, object>("level", Level_LevelId.level));
+                lstParams.Add(new KeyValuePair<string, object>("eid", Level_LevelId.eid));
+                DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.pending_contractemployee_hierarchy_details[0], StoredProcedure.pending_contractemployee_hierarchy_details[1], lstParams);
+                return ds;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public DataSet FetchContractEmployeeDetailsWithBothHierarchy(EmployeeIdModel employeeidModel)
+        {
+            try
+            {
+                List<KeyValuePair<string, object>> lstParams = new List<KeyValuePair<string, object>>();
+                lstParams.Add(new KeyValuePair<string, object>("empid", employeeidModel.employeeid));
+                DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.pending_contractemployee_hierarchy_details_fetch[0], StoredProcedure.pending_contractemployee_hierarchy_details_fetch[1], lstParams);
+                return ds;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public DataSet PendingContractEmployeesAcceptReject(ContractEmpStatus CtrEmpStatus)
+        {
+            try
+            {
+                List<KeyValuePair<string, object>> lstParams = new List<KeyValuePair<string, object>>();
+                lstParams.Add(new KeyValuePair<string, object>("empid", CtrEmpStatus.empid));
+                lstParams.Add(new KeyValuePair<string, object>("status", CtrEmpStatus.status));
+                DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.pending_contractemployee_hierarchy_accept_reject[0], StoredProcedure.pending_contractemployee_hierarchy_accept_reject[1], lstParams);
+                return ds;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+
 
     }
 }

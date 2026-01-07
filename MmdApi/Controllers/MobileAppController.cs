@@ -12,6 +12,8 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.IO;
 using System.Text;
+using System.Globalization;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MdmApi.Controllers
 {
@@ -25,7 +27,7 @@ namespace MdmApi.Controllers
         {
             _mobileappRepo = mobileAppRepo;
         }
-
+        [AllowAnonymous]
         [Route("MobileUserInsert")]
         [HttpPost]
 
@@ -44,7 +46,7 @@ namespace MdmApi.Controllers
                 return Ok(APIResponse.SendResponse("Insertion Failed", "Insertion Failed"));
             }
         }
-
+        [AllowAnonymous]
         [Route("MobileLogsInsert")]
         [HttpPost]
 
@@ -61,7 +63,7 @@ namespace MdmApi.Controllers
             string filePath = Path.Combine(directoryPath, fileName);
 
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine($"{mobileLogs.empid},{mobileLogs.attendance_date},{mobileLogs.latitude},{mobileLogs.longitude},{mobileLogs.geostatus},{mobileLogs.reason},{mobileLogs.inserteddate},{now:yyyy-MM-dd HH:mm:ss}");
+            sb.AppendLine($"{mobileLogs.empid},{mobileLogs.attendance_date},{mobileLogs.latitude},{mobileLogs.longitude},{mobileLogs.geostatus},{mobileLogs.reason},{mobileLogs.inserteddate},{mobileLogs.appVersion},{now:yyyy-MM-dd HH:mm:ss}");
 
             using (var fs = new FileStream(filePath, FileMode.Append, FileAccess.Write, FileShare.Read))
             using (var sw = new StreamWriter(fs))
@@ -75,7 +77,7 @@ namespace MdmApi.Controllers
             if (ds != null)
             {
                 DateTime currentTime = DateTime.Now;
-                string formattedTime = currentTime.ToString("yyyy-MM-dd HH:mm:ss");
+                string formattedTime = currentTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
                 var responseData = new
                 {
                     Status = "Success",
@@ -92,7 +94,7 @@ namespace MdmApi.Controllers
             }
         }
 
-
+        [AllowAnonymous]
         [Route("MobileEmployeeDetails")]
         [HttpPost]
         public async Task<IActionResult> MobileEmployeeDetails(string employeeid)
@@ -108,7 +110,7 @@ namespace MdmApi.Controllers
                 return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
             }
         }
-
+        [AllowAnonymous]
         [Route("MobileDashboardCounts")]
         [HttpPost]
         public async Task<IActionResult> MobileDashboardCounts(MobileAppString MobileApp)
@@ -125,7 +127,7 @@ namespace MdmApi.Controllers
                 return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
             }
         }
-
+        [AllowAnonymous]
         [Route("MobileEmployeeAbsentPresentCounts")]
         [HttpPost]
         public async Task<IActionResult> MobileEmployeeAbsentPresentCounts(MobileDasboardLogsString mobileDasboardLogs)
@@ -196,7 +198,7 @@ namespace MdmApi.Controllers
         //    }
         //}
 
-
+        [AllowAnonymous]
         [Route("MobileTourAdvanceFromDate")]
         [HttpPost]
         public async Task<IActionResult> MobileTourAdvanceFromDate(MobileDasboardLogsString mobileDasboardLogs)
@@ -212,7 +214,7 @@ namespace MdmApi.Controllers
                 return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
             }
         }
-
+        [AllowAnonymous]
         [Route("MobileTourAdvanceDetails")]
         [HttpPost]
         public async Task<IActionResult> MobileTourAdvanceDetails(string employeeid)
@@ -228,7 +230,7 @@ namespace MdmApi.Controllers
                 return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
             }
         }
-
+        [AllowAnonymous]
         [Route("MobileTourAdvanceInsert")]
         [HttpPost]
         public async Task<IActionResult> MobileTourAdvanceInsert(TourModel tourModel)
@@ -244,7 +246,7 @@ namespace MdmApi.Controllers
                 return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
             }
         }
-
+        [AllowAnonymous]
         [Route("FetchMobileTourAdvance")]
         [HttpPost]
         public async Task<IActionResult> FetchMobileTourAdvance(int Tourid)
@@ -277,6 +279,7 @@ namespace MdmApi.Controllers
         //        return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
         //    }
         //}
+        [AllowAnonymous]
         [Route("FetchMobileEmployeeAttendanceOnclick")]
         [HttpPost]
         public async Task<IActionResult> FetchMobileEmployeeAttendanceOnclick(MobileLogs mobileLogs)
@@ -308,7 +311,7 @@ namespace MdmApi.Controllers
             }
         }
 
-
+        [AllowAnonymous]
         [Route("FetchMobileEmployeeIntimeStatus")]
         [HttpPost]
         public async Task<IActionResult> FetchMobileEmployeeIntimeStatus(MobileLogs mobileLogs)
@@ -324,7 +327,7 @@ namespace MdmApi.Controllers
                 return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
             }
         }
-
+        [AllowAnonymous]
         [Route("FetchMobilePendingApprovals")]
         [HttpPost]
         public async Task<IActionResult> FetchMobilePendingApprovals(MobileDasboardLogsString mobileDasboardLogs)
@@ -340,7 +343,7 @@ namespace MdmApi.Controllers
                 return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
             }
         }
-
+        [AllowAnonymous]
         [Route("FetchMobileLeaveOnclicks")]
         [HttpPost]
         public async Task<IActionResult> FetchMobileLeaveOnclicks(MobileDasboardLogsString mobileDasboardLogs)
@@ -356,7 +359,7 @@ namespace MdmApi.Controllers
                 return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
             }
         }
-
+        [AllowAnonymous]
         [Route("FetchMobileEmployeeLocation")]
         [HttpPost]
         public async Task<IActionResult> FetchMobileEmployeeLocation(MobileDasboardLogsString mobileDasboardLogs)
@@ -373,7 +376,7 @@ namespace MdmApi.Controllers
                 return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
             }
         }
-
+        [AllowAnonymous]
         [Route("InsertMobileEmployeeLocation")]
         [HttpPost]
         public async Task<IActionResult> InsertMobileEmployeeLocation(MobileLocationString mobileLocation)
@@ -393,7 +396,7 @@ namespace MdmApi.Controllers
                 return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
             }
         }
-
+        [AllowAnonymous]
         [Route("Mobile_InsertJourneyDetails")]
         [HttpPost]
         public async Task<IActionResult> Mobile_InsertJourneyDetails([FromBody] JourneyDetailsModelList journeyDetailsRequest)
@@ -404,6 +407,7 @@ namespace MdmApi.Controllers
             return Ok(APIResponse.SendResponse("Success", null, result));
         }
 
+        [AllowAnonymous]
         [Route("Mobile_InsertHotelStayDetails")]
         [HttpPost]
         public async Task<IActionResult> Mobile_InsertHotelStayDetails([FromBody] HotelDetailsModelList hotelstayDetailsRequest)
@@ -411,7 +415,7 @@ namespace MdmApi.Controllers
             var result = _mobileappRepo.Mobile_InsertHotelstayDetails(hotelstayDetailsRequest.hotels);
             return Ok(APIResponse.SendResponse("Success", null, result));
         }
-
+        [AllowAnonymous]
         [Route("Mobile_InsertConvenyanceDetails")]
         [HttpPost]
         public async Task<IActionResult> Mobile_InsertConvenyanceDetails([FromBody] ConvenyanceDetailsModelList ConvenyanceDetailsRequest)
@@ -420,7 +424,7 @@ namespace MdmApi.Controllers
             return Ok(APIResponse.SendResponse("Success", null, result));
         }
 
-
+        [AllowAnonymous]
         [Route("Mobile_InsertMiscelianeousDetails")]
         [HttpPost]
         public async Task<IActionResult> Mobile_InsertMiscelianeousDetails([FromBody] MiscelianeousDetailsModelList MiscelianeousDetailsRequest)
@@ -428,7 +432,7 @@ namespace MdmApi.Controllers
             var result = _mobileappRepo.Mobile_InsertMiscelianeousDetails(MiscelianeousDetailsRequest.miscelianeous);
             return Ok(APIResponse.SendResponse("Success", null, result));
         }
-
+        [AllowAnonymous]
         [Route("GetMobileJourneyDetails")]
         [HttpPost]
         public async Task<IActionResult> GetJourneyDetails(TourDetailsModel tourDetailsModel)
@@ -445,7 +449,7 @@ namespace MdmApi.Controllers
                 return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
             }
         }
-
+        [AllowAnonymous]
         [Route("DeleteMobileJourneyDetails")]
         [HttpPost]
         public async Task<IActionResult> DeleteMobileJourneyDetails(JourneyDetailsModel1 journeyDetailsModel)
@@ -461,7 +465,7 @@ namespace MdmApi.Controllers
                 return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
             }
         }
-
+        [AllowAnonymous]
         [Route("DeleteMobileHotelstayDetails")]
         [HttpPost]
         public async Task<IActionResult> DeleteMobileHotelstayDetails(HotelStayDetailsModel hotelStayDetailsModel)
@@ -477,7 +481,7 @@ namespace MdmApi.Controllers
                 return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
             }
         }
-
+        [AllowAnonymous]
         [Route("DeleteMobileConvenyanceDetails")]
         [HttpPost]
         public async Task<IActionResult> DeleteMobileConvenyanceDetails(ConvenyanceDetailsModel convenyanceDetailsModel)
@@ -493,7 +497,7 @@ namespace MdmApi.Controllers
                 return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
             }
         }
-
+        [AllowAnonymous]
         [Route("DeleteMobileMiscelianeousdetails")]
         [HttpPost]
         public async Task<IActionResult> DeleteMobileMiscelianeousdetails(MiscelianeousDetailsModel miscelianeousDetailsModel)
@@ -509,7 +513,7 @@ namespace MdmApi.Controllers
                 return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
             }
         }
-
+        [AllowAnonymous]
         [Route("GetTotalTourDetails")]
         [HttpPost]
         public async Task<IActionResult> GetTotalTourDetails(TourDetailsModel tourDetailsModel)
@@ -525,7 +529,7 @@ namespace MdmApi.Controllers
                 return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
             }
         }
-
+        [AllowAnonymous]
         [Route("GetMobileHotelstay")]
         [HttpPost]
         public async Task<IActionResult> GetHotelStay(TourDetailsModel tourDetailsModel)
@@ -542,7 +546,7 @@ namespace MdmApi.Controllers
                 return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
             }
         }
-
+        [AllowAnonymous]
         [Route("GethMobileConvenyanceDetails")]
         [HttpPost]
         public async Task<IActionResult> FetchMobileConvenyanceDetails(TourDetailsModel tourDetailsModel)
@@ -559,7 +563,7 @@ namespace MdmApi.Controllers
                 return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
             }
         }
-
+        [AllowAnonymous]
         [Route("GetMobileMiscelianeousexpensesDetails")]
         [HttpPost]
         public async Task<IActionResult> GetMobileMiscelianeousexpensesDetails(TourDetailsModel tourDetailsModel)
@@ -575,7 +579,7 @@ namespace MdmApi.Controllers
                 return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
             }
         }
-
+        [AllowAnonymous]
         [Route("MobileAppUpdate")]
         [HttpPost]
         public async Task<IActionResult> MobileAppUpdate()
@@ -591,6 +595,53 @@ namespace MdmApi.Controllers
                 return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
             }
         }
+        [AllowAnonymous]
+        [Route("FailedMobileLogs")]
+        [HttpPost]
+        public async Task<IActionResult> FailedMobileLogs(MobileLog mobileLogs)
+        {
+
+            //employeeId_ddMMyyyyHHmmssSSS.txt
+            string directoryPath = @"D:\data\Pvvnl\FailedLogs";
+            Directory.CreateDirectory(directoryPath);
+
+            DateTime now = DateTime.Now;
+            string timestamp = now.ToString("ddMMyyyyHHmmssfff");
+            string fileName = $"{mobileLogs.empid}_{timestamp}.txt";
+            string filePath = Path.Combine(directoryPath, fileName);
+
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"{mobileLogs.empid},{mobileLogs.attendance_date},{mobileLogs.latitude},{mobileLogs.longitude},{mobileLogs.geostatus},{mobileLogs.reason},{mobileLogs.inserteddate},{mobileLogs.appVersion},{now:yyyy-MM-dd HH:mm:ss}");
+
+            using (var fs = new FileStream(filePath, FileMode.Append, FileAccess.Write, FileShare.Read))
+            using (var sw = new StreamWriter(fs))
+            {
+                sw.Write(sb.ToString());
+            }
+
+
+            DataSet ds = new DataSet();
+            ds = _mobileappRepo.FailedMobileLogs(mobileLogs);
+            if (ds != null)
+            {
+                DateTime currentTime = DateTime.Now;
+                string formattedTime = currentTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+                var responseData = new
+                {
+                    Status = "Success",
+                    Data = ds,
+                    Timestamp = formattedTime
+                };
+
+                return Ok(APIResponse.SendResponse("Success", null, responseData));
+                //return Ok(APIResponse.SendResponse("Success", null, ds));
+            }
+            else
+            {
+                return Ok(APIResponse.SendResponse("Insertion Failed", "Insertion Failed"));
+            }
+        }
+
 
     }
 }

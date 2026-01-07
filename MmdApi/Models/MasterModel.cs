@@ -109,6 +109,11 @@ namespace MdmApi.Models
         public int q_no { get; set; }
         [JsonProperty("answers")]
         public string answers { get; set; }
+        [JsonProperty("password")]
+        public string password { get; set; }
+        [JsonProperty("token")]
+        public string token { get; set; }
+                                         
 
     }
 

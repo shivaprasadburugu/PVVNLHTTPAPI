@@ -83,5 +83,7 @@ namespace MdmApi.Repository
         DataSet GetSubStationMasterDetails();
         DataSet FetchSubStationMasterDetails(SubstationMaster substation);
         DataSet UpdateSubstationMasterDetails(SubstationMaster substation);
+        DataSet AgencyDropdown(OptionalHoliday optionalholiday);
+
     }
 }

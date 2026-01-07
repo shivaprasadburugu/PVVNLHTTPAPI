@@ -451,6 +451,7 @@ namespace MdmApi.Controllers
                 return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
             }
         }
+        [AllowAnonymous]
         [Route("Download1")]
         [HttpPost]
         public IActionResult GetFile1(string filePath)
@@ -495,6 +496,8 @@ namespace MdmApi.Controllers
             }
         }
 
+
+        [AllowAnonymous]
         [Route("GetFile1")]
         [HttpPost]
         public IActionResult GetFile2(string filePath)
@@ -539,6 +542,82 @@ namespace MdmApi.Controllers
                 Console.WriteLine($"Unexpected error: {ex.Message}");
                 return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
             }
+        }
+
+        [AllowAnonymous]
+        [Route("GetFiles")]
+        [HttpPost]
+        public IActionResult GetFiles(string filePath)
+        {
+            if (string.IsNullOrWhiteSpace(filePath))
+            {
+                return BadRequest("File path cannot be null or empty.");
+            }
+
+            try
+            {
+                if (System.IO.File.Exists(filePath))
+                {
+                    // Extract filename from path for Content-Disposition header
+                    string fileName = Path.GetFileName(filePath);
+
+                    // Get the file's bytes
+                    byte[] fileBytes = System.IO.File.ReadAllBytes(filePath);
+
+                    // Get content type based on file extension
+                    string contentType = GetContentTypes(filePath);
+
+                    // Return file with Content-Disposition header for download
+                    return File(fileBytes, contentType, fileName);
+                }
+                else
+                {
+                    return NotFound("File not found.");
+                }
+            }
+            catch (IOException ex)
+            {
+                Console.WriteLine($"Error accessing file: {ex.Message}");
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while accessing the file.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Unexpected error: {ex.Message}");
+                return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
+            }
+        }
+
+        // Helper method to get content type
+        private string GetContentTypes(string filePath)
+        {
+            string extension = Path.GetExtension(filePath).ToLowerInvariant();
+
+            return extension switch
+            {
+                ".jpg"  => "image/jpeg",
+                ".jpeg" => "image/jpeg",
+                ".png" => "image/png",
+                ".gif" => "image/gif",
+                ".bmp" => "image/bmp",
+                ".pdf" => "application/pdf",
+                ".xlsx" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                ".xls" => "application/vnd.ms-excel",
+                ".docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                ".doc" => "application/msword",
+                ".txt" => "text/plain",
+                ".csv" => "text/csv",
+                ".zip" => "application/zip",
+                ".rar" => "application/x-rar-compressed",
+                ".7z" => "application/x-7z-compressed",
+                ".mp4" => "video/mp4",
+                ".mp3" => "audio/mpeg",
+                ".wav" => "audio/wav",
+                ".json" => "application/json",
+                ".xml" => "application/xml",
+                ".css" => "text/css",
+                ".js" => "application/javascript",
+                _ => "application/octet-stream"
+            };
         }
 
 
