@@ -1063,5 +1063,40 @@ namespace MdmApi.Repository
             }
 
         }
+        public DataSet AgencyDropdown(OptionalHoliday optionalholiday)
+        {
+            try
+            {
+                // ✅ Default logic for parameters
+                string agency = string.IsNullOrEmpty(optionalholiday.agencyname)
+                    ? "ALL"
+                    : optionalholiday.agencyname;
+
+                string officeType = string.IsNullOrEmpty(optionalholiday.officetype)
+                    ? "ALL"
+                    : optionalholiday.officetype;
+
+                // ✅ Prepare parameters
+                List<KeyValuePair<string, object>> lstParams = new List<KeyValuePair<string, object>>
+        {
+            new KeyValuePair<string, object>("p_agencyname", agency),
+            new KeyValuePair<string, object>("p_officetype", officeType)
+        };
+
+                // ✅ Execute stored procedure
+                DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(
+                    StoredProcedure.agencywisedesignation_details[0],
+                    StoredProcedure.agencywisedesignation_details[1],
+                    lstParams
+                );
+
+                return ds;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
     }
 }

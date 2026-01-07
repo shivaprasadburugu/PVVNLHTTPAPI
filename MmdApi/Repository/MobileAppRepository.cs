@@ -113,9 +113,9 @@ namespace MdmApi.Repository
             try
             {
                 DateTime parseddate = DateTime.ParseExact(mobileLogs.attendance_date, new[] { "dd-MM-yyyy HH:mm:ss", "dd/MM/yyyy HH:mm:ss", "MM-dd-yyyy HH:mm:ss", "MM/dd/yyyy HH:mm:ss", "yyyy-MM-dd HH:mm:ss", "yyyy/MM/dd HH:mm:ss" }, null, System.Globalization.DateTimeStyles.None);
-                string fromdate = parseddate.ToString("yyyy-MM-dd HH:mm:ss");
+                string fromdate = parseddate.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
                 DateTime parseddate1 = DateTime.ParseExact(mobileLogs.inserteddate, new[] { "dd-MM-yyyy HH:mm:ss", "dd/MM/yyyy HH:mm:ss", "MM-dd-yyyy HH:mm:ss", "MM/dd/yyyy HH:mm:ss", "yyyy-MM-dd HH:mm:ss", "yyyy/MM/dd HH:mm:ss" }, null, System.Globalization.DateTimeStyles.None);
-                string insertedDate = parseddate1.ToString("yyyy-MM-dd HH:mm:ss");
+                string insertedDate = parseddate1.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
                 
 
                 List<KeyValuePair<string, object>> lstParams = new List<KeyValuePair<string, object>>();
@@ -168,6 +168,14 @@ namespace MdmApi.Repository
                 else
                 {
                     lstParams.Add(new KeyValuePair<string, object>("inserted_date", insertedDate));
+                }
+                if (string.IsNullOrWhiteSpace(mobileLogs.appVersion))
+                {
+                    lstParams.Add(new KeyValuePair<string, object>("app_version", DBNull.Value));
+                }
+                else
+                {
+                    lstParams.Add(new KeyValuePair<string, object>("app_version", mobileLogs.appVersion));
                 }
 
                 DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.mobile_mobilelogs_insert[0], StoredProcedure.mobile_mobilelogs_insert[1], lstParams);
@@ -833,6 +841,85 @@ namespace MdmApi.Repository
             try
             {
                 DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.mobileapp_update[0], StoredProcedure.mobileapp_update[1], null);
+                return ds;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public DataSet FailedMobileLogs(MobileLog mobileLogs)
+        {
+            try
+            {
+                DateTime parseddate = DateTime.ParseExact(mobileLogs.attendance_date, new[] { "dd-MM-yyyy HH:mm:ss", "dd/MM/yyyy HH:mm:ss", "MM-dd-yyyy HH:mm:ss", "MM/dd/yyyy HH:mm:ss", "yyyy-MM-dd HH:mm:ss", "yyyy/MM/dd HH:mm:ss" }, null, System.Globalization.DateTimeStyles.None);
+                string fromdate = parseddate.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+                DateTime parseddate1 = DateTime.ParseExact(mobileLogs.inserteddate, new[] { "dd-MM-yyyy HH:mm:ss", "dd/MM/yyyy HH:mm:ss", "MM-dd-yyyy HH:mm:ss", "MM/dd/yyyy HH:mm:ss", "yyyy-MM-dd HH:mm:ss", "yyyy/MM/dd HH:mm:ss" }, null, System.Globalization.DateTimeStyles.None);
+                string insertedDate = parseddate1.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+
+
+                List<KeyValuePair<string, object>> lstParams = new List<KeyValuePair<string, object>>();
+
+                lstParams.Add(new KeyValuePair<string, object>("empid", mobileLogs.empid));
+                if(string.IsNullOrWhiteSpace(mobileLogs.attendance_date))
+                {
+                    lstParams.Add(new KeyValuePair<string, object>("attendance_date", DBNull.Value));
+                }
+                else
+                {
+                    lstParams.Add(new KeyValuePair<string, object>("attendance_date", fromdate));
+                }
+                if(string.IsNullOrWhiteSpace(mobileLogs.latitude))
+                {
+                    lstParams.Add(new KeyValuePair<string, object>("latitude", DBNull.Value));
+                }
+                else
+                {
+                    lstParams.Add(new KeyValuePair<string, object>("latitude", mobileLogs.latitude));
+                }
+                if(string.IsNullOrWhiteSpace(mobileLogs.longitude))
+                {
+                    lstParams.Add(new KeyValuePair<string, object>("longitude", DBNull.Value));
+                }
+                else
+                {
+                    lstParams.Add(new KeyValuePair<string, object>("longitude", mobileLogs.longitude));
+                }
+                if(string.IsNullOrWhiteSpace(mobileLogs.geostatus))
+                {
+                    lstParams.Add(new KeyValuePair<string, object>("geo_status", DBNull.Value));
+                }
+                else
+                {
+                    lstParams.Add(new KeyValuePair<string, object>("geo_status", mobileLogs.geostatus));
+                }
+                if(string.IsNullOrWhiteSpace(mobileLogs.reason))
+                {
+                    lstParams.Add(new KeyValuePair<string, object>("reason", DBNull.Value));
+                }
+                else
+                {
+                    lstParams.Add(new KeyValuePair<string, object>("reason", mobileLogs.reason));
+                }
+                if (string.IsNullOrWhiteSpace(mobileLogs.inserteddate))
+                {
+                    lstParams.Add(new KeyValuePair<string, object>("inserted_date", DBNull.Value));
+                }
+                else
+                {
+                    lstParams.Add(new KeyValuePair<string, object>("inserted_date", insertedDate));
+                }
+                if (string.IsNullOrWhiteSpace(mobileLogs.appVersion))
+                {
+                    lstParams.Add(new KeyValuePair<string, object>("app_version", DBNull.Value));
+                }
+                else
+                {
+                    lstParams.Add(new KeyValuePair<string, object>("app_version", mobileLogs.appVersion));
+                }
+
+                DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.mobile_mobilelogsfailure_insert[0], StoredProcedure.mobile_mobilelogsfailure_insert[1], lstParams);
                 return ds;
             }
             catch (Exception ex)

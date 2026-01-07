@@ -14,6 +14,6 @@ namespace MdmApi.Models
 		public string RefreshToken { get; set; }
 		public string GrantType { get; set; }
 		public string ClientId { get; set; }
-
-	}
+        public double ExpireMinutes { get; internal set; }
+    }
 }

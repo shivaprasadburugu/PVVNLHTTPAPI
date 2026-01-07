@@ -674,7 +674,7 @@ namespace MdmApi.Repository
             }
             catch (Exception ex)
             {
-                //return null;
+                // return null;
                 return null;
             }
         }
@@ -692,6 +692,29 @@ namespace MdmApi.Repository
                 lstParams.Add(new KeyValuePair<string, object>("id", date.id));
                 DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.outsource_report[0], StoredProcedure.outsource_report[1], lstParams);
                 //return ds;
+                return ds;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+        public DataSet EmployeeOutGeoFenceReport(EmployeeMonthReport employeeMonthReport)
+        {
+            try
+            {
+                DateTime parseddate = DateTime.ParseExact(employeeMonthReport.fromdate, new[] { "dd-MM-yyyy", "dd/MM/yyyy", "MM-dd-yyyy", "MM/dd/yyyy", "yyyy-MM-dd", "yyyy/MM/dd" }, null, System.Globalization.DateTimeStyles.None);
+                string fromDate = parseddate.ToString("yyyy-MM-dd");
+                DateTime parseddate1 = DateTime.ParseExact(employeeMonthReport.todate, new[] { "dd-MM-yyyy", "dd/MM/yyyy", "MM-dd-yyyy", "MM/dd/yyyy", "yyyy-MM-dd", "yyyy/MM/dd" }, null, System.Globalization.DateTimeStyles.None);
+                string todate = parseddate1.ToString("yyyy-MM-dd");
+                List<KeyValuePair<string, object>> lstParams = new List<KeyValuePair<string, object>>();
+                lstParams.Add(new KeyValuePair<string, object>("fromdate", fromDate));
+                lstParams.Add(new KeyValuePair<string, object>("todate", todate));
+                lstParams.Add(new KeyValuePair<string, object>("level", employeeMonthReport.level));
+                lstParams.Add(new KeyValuePair<string, object>("id", employeeMonthReport.id));
+                lstParams.Add(new KeyValuePair<string, object>("loginname", employeeMonthReport.loginName));
+                lstParams.Add(new KeyValuePair<string, object>("login_type", employeeMonthReport.login_type));
+                DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.geo_fence_out_report[0], StoredProcedure.geo_fence_out_report[1], lstParams);
                 return ds;
             }
             catch (Exception ex)

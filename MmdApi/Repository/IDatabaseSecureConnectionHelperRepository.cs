@@ -17,6 +17,7 @@ namespace MdmApi.Repository
         DataSet ExecuteDataSet(string storedProcedureName, List<KeyValuePair<string, object>> parameterCollection);
         DataSet ExecuteAsDataSet(string storedProcedureName,string outResults, List<KeyValuePair<string, object>> parameterCollection);
         DataSet ExecuteQuery(string query, Dictionary<string, object> parameters);
+        int ExecuteNonQuery(string query, Dictionary<string, object> parameters);
     }
 }
  

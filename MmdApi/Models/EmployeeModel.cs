@@ -10,7 +10,19 @@ namespace MdmApi.Models
     {
         [JsonProperty("employeeid")]
         public string employeeid { get; set; }
+        [JsonProperty("inserted_by")]
+        public string inserted_by { get; set; }
+        [JsonProperty("role_id")]
+        public int role_id { get; set; }
+        [JsonProperty("reasonofremoval")]
+        public string reasonofremoval { get; set; }
+        [JsonProperty("suspenssionfile")]
+        public string suspenssionfile { get; set; }
+
     }
+
+
+
     public class EmployeeLeaveModel
     {
         [JsonProperty("leaveid")]
@@ -244,6 +256,8 @@ namespace MdmApi.Models
         public string level5name { get; set; }
         [JsonProperty("level6name")]
         public string level6name { get; set; }
+        [JsonProperty("roleid")]
+        public int roleid { get; set; }
     }
     public class ContractEmployeeDetailsModel
     {
@@ -253,22 +267,30 @@ namespace MdmApi.Models
         public string first_name { get; set; }
         [JsonProperty("father_name")]
         public string father_name { get; set; }
-        [JsonProperty("perment_address")]
-        public string perment_address { get; set; }
+
+        [JsonProperty("designation_name")]
+        public string designation_name { get; set; }
+
+        [JsonProperty("department")]
+        public string department { get; set; }
+
         [JsonProperty("mobile_number")]
         public string mobile_number { get; set; }
+
+        [JsonProperty("perment_address")]
+        public string perment_address { get; set; }
+
+        [JsonProperty("authentication_mode")]
+        public string authentication_mode { get; set; }
 
         [JsonProperty("employee_photo")]
         public string employee_photo { get; set; }
 
-        [JsonProperty("authentication_mode")]
-        public string authentication_mode { get; set; }
+        
         [JsonProperty("password")]
         public string password { get; set; }
-        [JsonProperty("designation_name")]
-        public string designation_name { get; set; }
-        [JsonProperty("department")]
-        public string department { get; set; }
+        
+        
 
         [JsonProperty("created_by")]
         public string created_by { get; set; }
@@ -284,8 +306,211 @@ namespace MdmApi.Models
         public string level5name { get; set; }
         [JsonProperty("level6name")]
         public string level6name { get; set; }
+
+        [JsonProperty("AadharNo")]
+        public string AadharNo { get; set; }
+
+        [JsonProperty("agencyname")]
+        public string agencyname { get; set; }
+
+        [JsonProperty("category")]
+        public string category { get; set; }
+
+        [JsonProperty("qualification")]
+        public string qualification { get; set; }
+
+        [JsonProperty("gender")]
+        public string gender { get; set; }
+
+        [JsonProperty("officetype")]
+        public string officetype { get; set; }
+
+        [JsonProperty("transferpath")]
+        public string transferpath { get; set; }
+
+        [JsonProperty("transfer_reason")]
+        public string transfer_reason { get; set; }
+
+        //---------------------------------------
+
+        [JsonProperty("roleid")]
+        public int roleid { get; set; }
+        
+        
+        [JsonProperty("joininglatterpath")]
+        public string joininglatterpath { get; set; }
+        
+        [JsonProperty("aadharpath")]
+        public string aadharpath { get; set; }
+        
+        [JsonProperty("passwords")]
+        public string passwords { get; set; }
+        [JsonProperty("rejectreason")]
+        public string rejectreason { get; set; }
     }
-    public class EmployeeDetailsModel1
+
+    public class contractempHierarchy
+    {
+        [JsonProperty("employeeid")]
+        public string employeeid { get; set; }
+        [JsonProperty("first_name")]
+        public string first_name { get; set; }
+        [JsonProperty("father_name")]
+        public string father_name { get; set; }
+
+        [JsonProperty("designation_name")]
+        public string designation_name { get; set; }
+
+        [JsonProperty("department")]
+        public string department { get; set; }
+
+        [JsonProperty("mobile_number")]
+        public string mobile_number { get; set; }
+
+        [JsonProperty("perment_address")]
+        public string perment_address { get; set; }
+
+        [JsonProperty("authentication_mode")]
+        public string authentication_mode { get; set; }
+
+        [JsonProperty("employee_photo")]
+        public string employee_photo { get; set; }
+
+
+        [JsonProperty("password")]
+        public string password { get; set; }
+
+
+
+        [JsonProperty("created_by")]
+        public string created_by { get; set; }
+        [JsonProperty("level1name")]
+        public string level1name { get; set; }
+        [JsonProperty("level2name")]
+        public string level2name { get; set; }
+        [JsonProperty("level3name")]
+        public string level3name { get; set; }
+        [JsonProperty("level4name")]
+        public string level4name { get; set; }
+        [JsonProperty("level5name")]
+        public string level5name { get; set; }
+        [JsonProperty("level6name")]
+        public string level6name { get; set; }
+
+        [JsonProperty("AadharNo")]
+        public string AadharNo { get; set; }
+
+        [JsonProperty("agencyname")]
+        public string agencyname { get; set; }
+
+        [JsonProperty("category")]
+        public string category { get; set; }
+
+        [JsonProperty("qualification")]
+        public string qualification { get; set; }
+
+        [JsonProperty("gender")]
+        public string gender { get; set; }
+
+        [JsonProperty("officetype")]
+        public string officetype { get; set; }
+
+        //[JsonProperty("transferpath")]
+        //public string transferpath { get; set; }
+
+        
+    }
+    
+
+    public class contractempPendingHierarchy
+    {
+        [JsonProperty("employeeid")]
+        public string employeeid { get; set; }
+        [JsonProperty("first_name")]
+        public string first_name { get; set; }
+        [JsonProperty("father_name")]
+        public string father_name { get; set; }
+
+        [JsonProperty("designation_name")]
+        public string designation_name { get; set; }
+
+        [JsonProperty("department")]
+        public string department { get; set; }
+
+        [JsonProperty("mobile_number")]
+        public string mobile_number { get; set; }
+
+        [JsonProperty("perment_address")]
+        public string perment_address { get; set; }
+
+        [JsonProperty("authentication_mode")]
+        public string authentication_mode { get; set; }
+
+        [JsonProperty("employee_photo")]
+        public string employee_photo { get; set; }
+
+
+        [JsonProperty("password")]
+        public string password { get; set; }
+
+
+        [JsonProperty("created_by")]
+        public string created_by { get; set; }
+        [JsonProperty("level1name")]
+        public string level1name { get; set; }
+        [JsonProperty("level2name")]
+        public string level2name { get; set; }
+        [JsonProperty("level3name")]
+        public string level3name { get; set; }
+        [JsonProperty("level4name")]
+        public string level4name { get; set; }
+        [JsonProperty("level5name")]
+        public string level5name { get; set; }
+        [JsonProperty("level6name")]
+        public string level6name { get; set; }
+
+        [JsonProperty("AadharNo")]
+        public string AadharNo { get; set; }
+
+        [JsonProperty("agencyname")]
+        public string agencyname { get; set; }
+
+        [JsonProperty("category")]
+        public string category { get; set; }
+
+        [JsonProperty("qualification")]
+        public string qualification { get; set; }
+
+        [JsonProperty("gender")]
+        public string gender { get; set; }
+
+        [JsonProperty("officetype")]
+        public string officetype { get; set; }
+
+        [JsonProperty("transferpath")]
+        public string transferpath { get; set; }
+
+        [JsonProperty("transfer_reason")]
+        public string transfer_reason { get; set; }
+
+    }
+
+    public class Level_LevelIdModel
+    {
+        [JsonProperty("level")]
+        public string level { get; set; }
+
+        [JsonProperty("eid")]
+        public int eid { get; set; }
+
+    }
+
+    public class EmployeeIdModel
+    {
+        [JsonProperty("employeeid")]
+        public string employeeid { get; set; }
+    }
+        public class EmployeeDetailsModel1
     {
         [JsonProperty("employeeid")]
         public int employeeid { get; set; }
@@ -551,10 +776,13 @@ namespace MdmApi.Models
     {
         [JsonProperty("level")]
         public string level { get; set; }
+
         [JsonProperty("id")]
         public int id { get; set; }
 
     }
+
+    
     public class ManualLogString
     {
         [JsonProperty("employeeid")]
@@ -611,6 +839,37 @@ namespace MdmApi.Models
 
 
     }
+    public class BulkUpdateRequest
+    {
+        public string InsertedBy { get; set; }
+        public List<EmployeeActionDto> Employees { get; set; }
+    }
 
+    
 
+    public class EmployeeActionDto
+    {
+        [JsonProperty("EmployeeId")]
+        public string EmployeeId { get; set; }
+
+        [JsonProperty("Date")]
+        public string Date { get; set; }
+
+        [JsonProperty("columnNames")]
+        public string ColumnNames { get; set; }
+        [JsonProperty("insertedby")]
+        public string insertedby { get; set; }
+
+    }
+
+    public class ContractEmpStatus
+    {
+
+        [JsonProperty("empid")]
+        public string empid { get; set; }
+
+        [JsonProperty("status")]
+        public string status { get; set; }
+
+    }
 }

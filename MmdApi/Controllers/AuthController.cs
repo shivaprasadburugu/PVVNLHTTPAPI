@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MdmApi.Controllers
 {
@@ -26,6 +27,7 @@ namespace MdmApi.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IUserManagementRepository _userManagementRepo;
+        private readonly IDatabaseSecureConnectionHelperRepository _databaseSecureConnectionHelper;
         // private readonly HttpClient _httpClient;
 
         //public AuthController(IUserManagementRepository userManagementRepo, IHttpClientFactory httpClientFactory)
@@ -34,10 +36,12 @@ namespace MdmApi.Controllers
         //    _httpClient = httpClientFactory.CreateClient();
         //}
 
-        public AuthController(IUserManagementRepository userManagementRepo)
+        public AuthController(IUserManagementRepository userManagementRepo, IDatabaseSecureConnectionHelperRepository databaseSecureConnectionHelper)
         {
             _userManagementRepo = userManagementRepo;
+            _databaseSecureConnectionHelper = databaseSecureConnectionHelper;
         }
+        [AllowAnonymous]
         [Route("userlogin")]
         [HttpPost]
         public async Task<IActionResult> LoginAsync([FromBody] LoginModel loginModel)
@@ -48,16 +52,17 @@ namespace MdmApi.Controllers
         }
 
         // user.employeeid = ds.Tables[0].Rows[0]["employeeid"].ToString();
+        [AllowAnonymous]
         [Route("userloginweb")]
         [HttpPost]
         public async Task<IActionResult> LoginAsyncweb([FromBody] LoginModelWeb loginModel)
         {
-            var result = await _userManagementRepo.LoginAsyncweb(loginModel);
-
+            var result = await _userManagementRepo.LoginAsyncweb(loginModel, Response);
+            if (!result.IsSuccess) return Ok(result);
             return Ok(result);
         }
 
-
+        [AllowAnonymous]
         [Route("userloginofficeaddress")]
         [HttpPost]
         public async Task<IActionResult> userloginofficeaddress([FromBody] LoginModelWeb loginModel)
@@ -66,7 +71,7 @@ namespace MdmApi.Controllers
 
             return Ok(result);
         }
-
+        [AllowAnonymous]
         [Route("Passworddecrypt")]
         [HttpPost]
         public string Passworddecrypt([FromBody] LoginModel1 loginModel)
@@ -77,6 +82,7 @@ namespace MdmApi.Controllers
 
             
         }
+        [AllowAnonymous]
         [Route("employeelogincheck")]
         [HttpPost]
         public async Task<IActionResult> Employeelogincheck([FromBody] LoginModel loginModel)
@@ -85,6 +91,7 @@ namespace MdmApi.Controllers
 
             return Ok(result);
         }
+        [AllowAnonymous]
         [Route("GetHierarchy")]
         [HttpPost]
         public async Task<IActionResult> GetHierarchy([FromBody] RequestHierarchyModel HierarchyModel)
@@ -104,6 +111,7 @@ namespace MdmApi.Controllers
                 return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
             }
         }
+        
         [Route("ChangePassword")]
         [HttpPost]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordModel changepasswordModel)
@@ -120,8 +128,37 @@ namespace MdmApi.Controllers
             }
         }
 
-       
+        [AllowAnonymous]
+        [HttpPost("refresh")]
+        public IActionResult Refresh([FromBody] Refresh refreshToken)
+        {
+            try
+            {
+                var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
+                var (accessToken, newRefreshToken) = _userManagementRepo.Refresh(refreshToken.refresh, ip);
+
+                return Ok(new
+                {
+                    accessToken,
+                    refreshToken = newRefreshToken
+                });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+
+
+
+
+
     }
 
-   
+
 }

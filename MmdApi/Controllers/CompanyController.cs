@@ -10,7 +10,7 @@ using MdmApi.Repository;
 using Microsoft.AspNetCore.Cors;
 using MdmApi.Models;
 using System.IO;
-
+using Microsoft.AspNetCore.Authorization;
 namespace MdmApi.Controllers
 {
     [Route("api/[controller]")]
@@ -23,7 +23,7 @@ namespace MdmApi.Controllers
         {
             _companyrepo = companyrepo;
         }
-
+        
         [Route("GetCompanyDetails")]
         [HttpGet]
         public async Task<IActionResult> GetCompanyDetails()
@@ -1063,6 +1063,38 @@ namespace MdmApi.Controllers
             else
             {
                 return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
+            }
+        }
+        [AllowAnonymous]
+        [Route("AgencyDropdown")]
+        [HttpPost]
+        public async Task<IActionResult> AgencyDropdown(OptionalHoliday optionalholiday)
+        {
+            try
+            {
+                // ✅ Defaulting logic — ensures stability for all scenarios
+                optionalholiday.agencyname = string.IsNullOrEmpty(optionalholiday.agencyname)
+                    ? "ALL"
+                    : optionalholiday.agencyname;
+
+                optionalholiday.officetype = string.IsNullOrEmpty(optionalholiday.officetype)
+                    ? "ALL"
+                    : optionalholiday.officetype;
+
+                DataSet ds = _companyrepo.AgencyDropdown(optionalholiday);
+
+                if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                {
+                    return Ok(APIResponse.SendResponse("Success", null, ds));
+                }
+                else
+                {
+                    return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(APIResponse.SendResponse("Error", ex.Message));
             }
         }
 

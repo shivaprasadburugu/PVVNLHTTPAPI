@@ -32,6 +32,9 @@ namespace MdmApi.Models
         public string  employeeid { get; set; }
         public string LoginName { get; set; }
         public string LoginType { get; set; }
+        public string Token { get; internal set; }
+        public string AccessToken { get; set; }     // new short-lived JWT
+        public string RefreshToken { get; set; }    // refresh token
     }
     public class EmployeeLoginResponse
     {

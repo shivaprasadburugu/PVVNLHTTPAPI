@@ -133,10 +133,13 @@ namespace MdmApi.Models
 
         [JsonProperty("inserteddate")]
         public string inserteddate { get; set; }
+        //appVersion
+        [JsonProperty("appVersion")]
+        public string appVersion { get; set; }
 
 
     }
-   
+
 
 
 }
