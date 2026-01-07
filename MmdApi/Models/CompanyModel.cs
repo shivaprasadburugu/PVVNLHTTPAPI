@@ -114,6 +114,10 @@ namespace MdmApi.Models
         public int levelid { get; set; }
         [JsonProperty("personnel_area")]
         public string personnel_area { get; set; }
+        [JsonProperty("agencyname")]
+        public string agencyname { get; set; }
+        [JsonProperty("officetype")]
+        public string officetype { get; set; }
 
     }
     public class LeaveId
@@ -189,6 +193,8 @@ namespace MdmApi.Models
         //created_by
         [JsonProperty("created_by")]
         public string created_by { get; set; }
+        [JsonProperty("rejectreason")]
+        public string rejectreason { get; set; }
 
 
     }

@@ -550,7 +550,7 @@ namespace MdmApi.Controllers
 
 
 
-
+      
         [Route("FetchSecurityQuestionanswers")]
         [HttpPost]
         public async Task<IActionResult> FetchSecurityQuestionanswers([FromBody] SecurityQuestionModel CreateRoleModel)
@@ -566,6 +566,7 @@ namespace MdmApi.Controllers
                 return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
             }
         }
+
 
 
 
@@ -585,7 +586,7 @@ namespace MdmApi.Controllers
             }
         }
 
-
+        [AllowAnonymous]
         [Route("InserForgetPasswordSecurityDetails")]
         [HttpPost]
         public async Task<IActionResult> InserForgetPasswordSecurityDetails([FromBody] List<SecurityQuestionModel> securityQuestions)
@@ -634,7 +635,55 @@ namespace MdmApi.Controllers
                 return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
             }
         }
+        [AllowAnonymous]
+        [Route("FetchSecurityQuestionanswers1")]
+        [HttpPost]
+        public async Task<IActionResult> FetchSecurityQuestionanswers1([FromBody] SecurityQuestionModel CreateRoleModel)
+        {
+            DataSet ds = new DataSet();
+            ds = _userManagementRepo.FetchSecurityQuestionanswers1(CreateRoleModel.employee_id);
+            if (ds != null)
+            {
+                return Ok(APIResponse.SendResponse("Success", null, ds));
+            }
+            else
+            {
+                return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
+            }
+        }
+        [AllowAnonymous]
+        [Route("SecurityQuestionanswers1Validate")]
+        [HttpPost]
+        public async Task<IActionResult> SecurityQuestionanswers1Validate([FromBody] SecurityQuestionModel CreateRoleModel)
+        {
+            
+            string token = _userManagementRepo.SecurityQuestionanswers1Validate(CreateRoleModel);
+            if (token != null)
+            {
+                return Ok(APIResponse.SendResponse("Success", null, token));
+            }
+            else
+            {
+                return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
+            }
+        }
 
+        [AllowAnonymous]
+        [Route("UpdatePasswordwithToken")]
+        [HttpPost]
+        public async Task<IActionResult> UpdatePasswordwithToken([FromBody] SecurityQuestionModel CreateRoleModel)
+        {
+            DataSet ds = new DataSet();
+            ds = _userManagementRepo.UpdatePasswordwithToken(CreateRoleModel);
+            if (ds != null)
+            {
+                return Ok(APIResponse.SendResponse("Success", null));
+            }
+            else
+            {
+                return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
+            }
+        }
     }
 
 }

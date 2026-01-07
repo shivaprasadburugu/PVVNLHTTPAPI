@@ -47,10 +47,10 @@ namespace MdmApi.Repository
         DataSet EmployeeDailydetailsreport(Date date);
         DataSet OfficeAttendanceStatusReport(Date date);
         DataSet SubstationAttendanceStatusReport(Date date);
-
         DataSet attendancezonewisereportdata(Date date);
         DataSet ZoneWiseContractAttendanceReport(Date date);
         DataSet OutSourceReport(Date date);
+        DataSet EmployeeOutGeoFenceReport(EmployeeMonthReport employeeMonthReport);
 
     }
 }

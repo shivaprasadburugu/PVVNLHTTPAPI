@@ -89,6 +89,8 @@ namespace MdmApi.Controllers
             }
         }
 
+
+
         [Route("InsertUpdateEmployeeAdvance")]
         [HttpPost]
         public async Task<IActionResult> InsertUpdateEmployeeAdvance([FromBody] EmployeeAdvanceString employeeAdvance)
@@ -346,6 +348,22 @@ namespace MdmApi.Controllers
             }
         }
 
+        [Route("ContractEmployeeDetailsDelete")]
+        [HttpPost]
+        public async Task<IActionResult> ContractEmployeeDetailsDelete(EmployeeModel employeeModel)
+        {
+            DataSet ds = new DataSet();
+            ds = _employeeRepo.ContractEmployeeDetailsDelete(employeeModel);
+            if (ds != null)
+            {
+                return Ok(APIResponse.SendResponse("Success", null, ds));
+            }
+            else
+            {
+                return Ok(APIResponse.SendResponse("Failed", "Failed"));
+            }
+        }
+
         [Route("FetchEmployeeQualifiaction")]
         [HttpPost]
         public async Task<IActionResult> FetchEmployeeQualifiaction(EmployeeModel employeeModel)
@@ -523,10 +541,10 @@ namespace MdmApi.Controllers
 
         [Route("UpdateContractEmployeeDetails")]
         [HttpPost]
-        public async Task<IActionResult> UpdateContractEmployeeDetails(ContractEmployeeDetailsModel ContractEmployeeDetailsModel)
+        public async Task<IActionResult> UpdateContractEmployeeDetails(contractempHierarchy contractempHierarchyModel)
         {
             DataSet ds = new DataSet();
-            ds = _employeeRepo.UpdateContractEmployeeDetails(ContractEmployeeDetailsModel);
+            ds = _employeeRepo.UpdateContractEmployeeDetails(contractempHierarchyModel);
             if (ds != null)
             {
                 return Ok(APIResponse.SendResponse("Success", null, ds));
@@ -536,6 +554,23 @@ namespace MdmApi.Controllers
                 return Ok(APIResponse.SendResponse("Failed", "Failed"));
             }
         }
+
+        [Route("UpdateContractEmployeePendingDetails")]
+        [HttpPost]
+        public async Task<IActionResult> UpdateContractEmployeePendingDetails(contractempPendingHierarchy contractempPendingHierarchyModel)
+        {
+            DataSet ds = new DataSet();
+            ds = _employeeRepo.UpdateContractEmployeePendingDetails(contractempPendingHierarchyModel);
+            if (ds != null)
+            {
+                return Ok(APIResponse.SendResponse("Success", null, ds));
+            }
+            else
+            {
+                return Ok(APIResponse.SendResponse("Failed", "Failed"));
+            }
+        }
+
         [Route("UpdateContractEmployeeDetailsWithouthierarchy")]
         [HttpPost]
         public async Task<IActionResult> UpdateContractEmployeeDetailsWithouthierarchy(ContractEmployeeDetailsModel ContractEmployeeDetailsModel)
@@ -1457,6 +1492,22 @@ namespace MdmApi.Controllers
 
             }
         }
+        [Route("ActivateContractEmployeeOnlyEmpId")]
+        [HttpPost]
+        public async Task<IActionResult> ActivateContractEmployeeOnlyEmpId(Status status)
+        {
+            DataSet ds = new DataSet();
+            ds = _employeeRepo.ActivateContractEmployeeOnlyEmpId(status);
+            if (ds != null)
+            {
+                return Ok(APIResponse.SendResponse("Success", null, ds));
+            }
+            else
+            {
+                return Ok(APIResponse.SendResponse("Failed", "Failed"));
+
+            }
+        }
 
         [Route("FetchLeaveByEmployeeIDForManual")]
         [HttpPost]
@@ -1659,6 +1710,353 @@ namespace MdmApi.Controllers
                 return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
             }
         }
+
+        
+        [HttpPost("UpdateFacialAttendance")]
+        public IActionResult BulkUpdate([FromBody] BulkUpdateRequest request)
+        {
+            if (request.Employees == null || request.Employees.Count == 0)
+                return BadRequest(new { success = false, message = "No data provided" });
+
+            try
+            {
+                //string insertedBy = employees.First().insertedby ?? "System";
+                _employeeRepo.BulkUpdateEmployees(request.Employees, request.InsertedBy);
+                return Ok(new { success = true, message = "Bulk update completed" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = ex.Message });
+            }
+        }
+
+        //DataSet EmployeemanagementDetailsPending(DesignationWiseData manageEmployeeLeave);
+        [Route("EmployeeDetailsPendingApproval")]
+        [HttpPost]
+        public async Task<IActionResult> EmployeeDetailsPendingApproval(DesignationWiseData weekoff)
+        {
+            DataSet ds = new DataSet();
+            ds = _employeeRepo.EmployeemanagementDetailsPending(weekoff);
+            if (ds != null)
+            {
+                return Ok(APIResponse.SendResponse("Success", null, ds));
+            }
+            else
+            {
+                return Ok(APIResponse.SendResponse("Failed", "Failed"));
+            }
+        }
+
+        //DataSet ContratualEmployeemanagementDetailsPending(DesignationWiseData manageEmployeeLeave);
+        [Route("ContratualEmployeeDetailsPendingApproval")]
+        [HttpPost]
+        public async Task<IActionResult> ContratualEmployeemanagementDetailsPending(DesignationWiseData weekoff)
+        {
+            DataSet ds = new DataSet();
+            ds = _employeeRepo.ContratualEmployeemanagementDetailsPending(weekoff);
+            if (ds != null)
+            {
+                return Ok(APIResponse.SendResponse("Success", null, ds));
+            }
+            else
+            {
+                return Ok(APIResponse.SendResponse("Failed", "Failed"));
+            }
+        }
+
+        [Route("FetchPendingEmployeeDetails")]
+        [HttpPost]
+        public async Task<IActionResult> FetchPendingEmployeeDetails([FromBody] EmployeeModel employeeModel)
+        {
+            DataSet ds = new DataSet();
+            ds = _employeeRepo.FetchPendingEmployeeDetails(employeeModel.employeeid);
+            if (ds != null)
+            {
+                return Ok(APIResponse.SendResponse("Success", null, ds));
+            }
+            else
+            {
+                return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
+            }
+        }
+
+        //DataSet InActiveContratualEmployeemanagementDetailsPending(DesignationWiseData manageEmployeeLeave)
+        [Route("InActiveContratualEmployeemanagementDetailsPending")]
+        [HttpPost]
+        public async Task<IActionResult> InActiveContratualEmployeemanagementDetailsPending(DesignationWiseData weekoff)
+        {
+            DataSet ds = new DataSet();
+            ds = _employeeRepo.InActiveContratualEmployeemanagementDetailsPending(weekoff);
+            if (ds != null)
+            {
+                return Ok(APIResponse.SendResponse("Success", null, ds));
+            }
+            else
+            {
+                return Ok(APIResponse.SendResponse("Failed", "Failed"));
+            }
+        }
+
+        //DataSet InActiveEmployeemanagementDetailsPending(DesignationWiseData manageEmployeeLeave)
+        [Route("InActiveEmployeemanagementDetailsPending")]
+        [HttpPost]
+        public async Task<IActionResult> InActiveEmployeemanagementDetailsPending(DesignationWiseData weekoff)
+        {
+            DataSet ds = new DataSet();
+            ds = _employeeRepo.InActiveEmployeemanagementDetailsPending(weekoff);
+            if (ds != null)
+            {
+                return Ok(APIResponse.SendResponse("Success", null, ds));
+            }
+            else
+            {
+                return Ok(APIResponse.SendResponse("Failed", "Failed"));
+            }
+        }
+
+
+        private const string OndutyApprovalOrder = @"D:\data\Pvvnl\Joininglatter\";
+        [Route("JoiningLatterPhotoUpload")]
+        [HttpPost]
+        public async Task<IActionResult> JoiningLatterPhotoUpload(IFormFile file, [FromForm] string extraData)
+        {
+
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest("No file uploaded.");
+            }
+
+            try
+            {
+                var filePath = "";
+                if (!(string.IsNullOrEmpty(extraData)))
+                {
+                    filePath = Path.Combine(OndutyApprovalOrder, extraData);
+                    filePath = filePath + "_" + file.FileName;
+
+                }
+                else
+                {
+                    filePath = OndutyApprovalOrder;
+                    filePath = filePath + "_" + file.FileName;
+                }
+
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+
+                return Ok(APIResponse.SendResponse("Success", null, filePath));
+            }
+            catch (Exception ex)
+            {
+                return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
+            }
+        }
+        private const string OndutyApprovalOrder1 = @"D:\data\Pvvnl\Aadhar\";
+        [Route("AadharPhotoUpload")]
+        [HttpPost]
+        public async Task<IActionResult> AadharPhotoUpload(IFormFile file, [FromForm] string extraData)
+        {
+
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest("No file uploaded.");
+            }
+
+            try
+            {
+                var filePath = "";
+                if (!(string.IsNullOrEmpty(extraData)))
+                {
+                    filePath = Path.Combine(OndutyApprovalOrder1, extraData);
+                    filePath = filePath + "_" + file.FileName;
+
+                }
+                else
+                {
+                    filePath = OndutyApprovalOrder1;
+                    filePath = filePath + "_" + file.FileName;
+                }
+
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+
+                return Ok(APIResponse.SendResponse("Success", null, filePath));
+            }
+            catch (Exception ex)
+            {
+                return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
+            }
+        }
+
+
+        private const string OndutyApprovalOrder2 = @"D:\data\Pvvnl\Transfer\";
+        [Route("TransferPhotoUpload")]
+        [HttpPost]
+        public async Task<IActionResult> TransferPhotoUpload(IFormFile file, [FromForm] string extraData)
+        {
+
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest("No file uploaded.");
+            }
+
+            try
+            {
+                var filePath = "";
+                if (!(string.IsNullOrEmpty(extraData)))
+                {
+                    filePath = Path.Combine(OndutyApprovalOrder2, extraData);
+                    filePath = filePath + "_" + file.FileName;
+
+                }
+                else
+                {
+                    filePath = OndutyApprovalOrder2;
+                    filePath = filePath + "_" + file.FileName;
+                }
+
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+
+                return Ok(APIResponse.SendResponse("Success", null, filePath));
+            }
+            catch (Exception ex)
+            {
+                return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
+            }
+        }
+
+        private const string OndutyApprovalOrder3 = @"D:\data\Pvvnl\DeleteEmployee\";
+        [Route("SuspendedPhotoUpload")]
+        [HttpPost]
+        public async Task<IActionResult> SuspendedPhotoUpload(IFormFile file, [FromForm] string extraData)
+        {
+
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest("No file uploaded.");
+            }
+
+            try
+            {
+                var filePath = "";
+                if (!(string.IsNullOrEmpty(extraData)))
+                {
+                    filePath = Path.Combine(OndutyApprovalOrder3, extraData);
+                    filePath = filePath + "_" + file.FileName;
+
+                }
+                else
+                {
+                    filePath = OndutyApprovalOrder3;
+                    filePath = filePath + "_" + file.FileName;
+                }
+
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+
+                return Ok(APIResponse.SendResponse("Success", null, filePath));
+            }
+            catch (Exception ex)
+            {
+                return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
+            }
+        }
+
+        [Route("EmployeemanagementDetailsRejected")]
+        [HttpPost]
+        public async Task<IActionResult> EmployeemanagementDetailsRejected(DesignationWiseData weekoff)
+        {
+            DataSet ds = new DataSet();
+            ds = _employeeRepo.EmployeemanagementDetailsRejected(weekoff);
+            if (ds != null)
+            {
+                return Ok(APIResponse.SendResponse("Success", null, ds));
+            }
+            else
+            {
+                return Ok(APIResponse.SendResponse("Failed", "Failed"));
+            }
+        }
+
+        //DataSet UpdtaeContractEmployeeRejectedDetails(ContractEmployeeDetailsModel ContractEmployeeDetailsModel)
+        [Route("UpdtaeContractEmployeeRejectedDetails")]
+        [HttpPost]
+        public async Task<IActionResult> UpdtaeContractEmployeeRejectedDetails(ContractEmployeeDetailsModel ContractEmployeeDetailsModel)
+        {
+            DataSet ds = new DataSet();
+            ds = _employeeRepo.UpdtaeContractEmployeeRejectedDetails(ContractEmployeeDetailsModel);
+            if (ds != null)
+            { 
+                return Ok(APIResponse.SendResponse("Success", null, ds));
+            }
+            else
+            {
+                return Ok(APIResponse.SendResponse("Failed", "Failed"));
+            }
+        }
+
+
+        [Route("ContractualEmployeesTransferPendings")]
+        [HttpPost]
+        public async Task<IActionResult> ContractualEmployeesTransferPendings(Level_LevelIdModel Level_LevelId)
+        {
+            DataSet ds = new DataSet();
+            ds = _employeeRepo.ContractualEmployeesTransferPendings(Level_LevelId);
+            if (ds != null)
+            {
+                return Ok(APIResponse.SendResponse("Success", null, ds));
+            }
+            else
+            {
+                return Ok(APIResponse.SendResponse("Failed", "Failed"));
+            }
+        }
+
+        [Route("FetchContractEmployeeDetailsWithBothHierarchy")]
+        [HttpPost]
+        public async Task<IActionResult> FetchContractEmployeeDetailsWithBothHierarchy([FromBody] EmployeeIdModel employeeidModel)
+        {
+            DataSet ds = new DataSet();
+            ds = _employeeRepo.FetchContractEmployeeDetailsWithBothHierarchy(employeeidModel);
+            if (ds != null)
+            {
+                return Ok(APIResponse.SendResponse("Success", null, ds));
+            }
+            else
+            {
+                return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
+            }
+        }
+
+        [Route("PendingContractEmployeesAcceptReject")]
+        [HttpPost]
+        public async Task<IActionResult> PendingContractEmployeesAcceptReject([FromBody] ContractEmpStatus CtrEmpStatus)
+        {
+            DataSet ds = new DataSet();
+            ds = _employeeRepo.PendingContractEmployeesAcceptReject(CtrEmpStatus);
+            if (ds != null)
+            {
+                return Ok(APIResponse.SendResponse("Success", null, ds));
+            }
+            else
+            {
+                return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
+            }
+        }
+
 
     }
 }
