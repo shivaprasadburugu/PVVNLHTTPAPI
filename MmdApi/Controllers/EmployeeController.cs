@@ -2056,6 +2056,54 @@ namespace MdmApi.Controllers
                 return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
             }
         }
+        
+        [Route("ContractEmployeeInitialDelete")]
+        [HttpPost]
+        public async Task<IActionResult> ContractEmployeeInitialDelete([FromBody] ContractEmpStatus CtrEmpStatus)
+        {
+            DataSet ds = new DataSet();
+            ds = _employeeRepo.ContractEmployeeInitialDelete(CtrEmpStatus);
+            if (ds != null)
+            {
+                return Ok(APIResponse.SendResponse("Success", null, ds));
+            }
+            else
+            {
+                return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
+            }
+        }
+        
+        [Route("PendingContractEmployeeDeleteFetch")]
+        [HttpPost]
+        public async Task<IActionResult> PendingContractEmployeeDeleteFetch([FromBody] manuallogs CtrEmpStatus)
+        {
+            DataSet ds = new DataSet();
+            ds = _employeeRepo.PendingContractEmployeeDeleteFetch(CtrEmpStatus);
+            if (ds != null)
+            {
+                return Ok(APIResponse.SendResponse("Success", null, ds));
+            }
+            else
+            {
+                return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
+            }
+        }
+
+        [Route("ConfirmDeleteContractualEmployee")]
+        [HttpPost]
+        public async Task<IActionResult> ConfirmDeleteContractualEmployee([FromBody] ContractEmpStatus CtrEmpStatus)
+        {
+            DataSet ds = new DataSet();
+            ds = _employeeRepo.ConfirmDeleteContractualEmployee(CtrEmpStatus);
+            if (ds != null)
+            {
+                return Ok(APIResponse.SendResponse("Success", null, ds));
+            }
+            else
+            {
+                return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
+            }
+        }
 
 
     }

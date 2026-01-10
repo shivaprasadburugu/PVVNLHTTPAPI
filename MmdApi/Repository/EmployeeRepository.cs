@@ -2542,6 +2542,53 @@ namespace MdmApi.Repository
                 return null;
             }
         }
+        
+        public DataSet ContractEmployeeInitialDelete(ContractEmpStatus CtrEmpStatus)
+        {
+            try
+            {
+                List<KeyValuePair<string, object>> lstParams = new List<KeyValuePair<string, object>>();
+                lstParams.Add(new KeyValuePair<string, object>("empid", CtrEmpStatus.empid));
+                DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.employee_details_contract_initital_delete[0], StoredProcedure.employee_details_contract_initital_delete[1], lstParams);
+                return ds;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+        
+        public DataSet PendingContractEmployeeDeleteFetch(manuallogs CtrEmpStatus)
+        {
+            try
+            {
+                List<KeyValuePair<string, object>> lstParams = new List<KeyValuePair<string, object>>();
+                lstParams.Add(new KeyValuePair<string, object>("level", CtrEmpStatus.level));
+                lstParams.Add(new KeyValuePair<string, object>("id", CtrEmpStatus.id));
+                DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.contractemployeemanagement_initital_delete_details[0], StoredProcedure.contractemployeemanagement_initital_delete_details[1], lstParams);
+                return ds;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public DataSet ConfirmDeleteContractualEmployee(ContractEmpStatus CtrEmpStatus)
+        {
+            try
+            {
+                List<KeyValuePair<string, object>> lstParams = new List<KeyValuePair<string, object>>();
+                lstParams.Add(new KeyValuePair<string, object>("empid", CtrEmpStatus.empid));
+                lstParams.Add(new KeyValuePair<string, object>("status", CtrEmpStatus.status));
+                DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.employee_details_contract_final_delete[0], StoredProcedure.employee_details_contract_final_delete[1], lstParams);
+                return ds;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
 
 
 

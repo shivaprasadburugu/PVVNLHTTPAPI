@@ -159,7 +159,9 @@ namespace MdmApi.Repository
         DataSet ContractualEmployeesTransferPendings(Level_LevelIdModel Level_LevelId);
         DataSet FetchContractEmployeeDetailsWithBothHierarchy(EmployeeIdModel employeeidModel);
         DataSet PendingContractEmployeesAcceptReject(ContractEmpStatus CtrEmpStatus);
-
+        DataSet ContractEmployeeInitialDelete(ContractEmpStatus CtrEmpStatus);
+        DataSet PendingContractEmployeeDeleteFetch(manuallogs CtrEmpStatus);
+        DataSet ConfirmDeleteContractualEmployee(ContractEmpStatus CtrEmpStatus);
 
 
 
