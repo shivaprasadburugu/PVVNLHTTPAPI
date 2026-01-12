@@ -870,6 +870,12 @@ namespace MdmApi.Models
 
         [JsonProperty("status")]
         public string status { get; set; }
+        
+        [JsonProperty("reason")]
+        public string reason { get; set; }
+        
+        [JsonProperty("filepath")]
+        public string filepath { get; set; }
 
     }
 }

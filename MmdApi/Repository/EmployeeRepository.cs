@@ -2549,6 +2549,8 @@ namespace MdmApi.Repository
             {
                 List<KeyValuePair<string, object>> lstParams = new List<KeyValuePair<string, object>>();
                 lstParams.Add(new KeyValuePair<string, object>("empid", CtrEmpStatus.empid));
+                lstParams.Add(new KeyValuePair<string, object>("reason", CtrEmpStatus.reason));
+                lstParams.Add(new KeyValuePair<string, object>("filepath", CtrEmpStatus.filepath));
                 DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.employee_details_contract_initital_delete[0], StoredProcedure.employee_details_contract_initital_delete[1], lstParams);
                 return ds;
             }

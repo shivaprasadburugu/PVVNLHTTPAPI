@@ -343,7 +343,7 @@ namespace MdmApi.Helpers
         public static readonly string[] pending_contractemployee_hierarchy_details_fetch = { "call pending_contractemployee_hierarchy_details_fetch(@empid,@_result_one)","1" };
 
         public static readonly string[] pending_contractemployee_hierarchy_accept_reject = { "call pending_contractemployee_hierarchy_accept_reject(@empid, @status)","0"};
-        public static readonly string[] employee_details_contract_initital_delete = { "call employee_details_contract_initital_delete(@empid)", "0" };
+        public static readonly string[] employee_details_contract_initital_delete = { "call employee_details_contract_initital_delete(@empid,@reason,@filepath)", "0" };
         public static readonly string[] contractemployeemanagement_initital_delete_details = { "call contractemployeemanagement_initital_delete_details(@level,@id,@_result_one,@_result_two)", "2" };
         public static readonly string[] employee_details_contract_final_delete = { "call employee_details_contract_final_delete(@empid,@status)", "0" };
         //Attendance Dashboard

@@ -2105,6 +2105,50 @@ namespace MdmApi.Controllers
             }
         }
 
+        private const string DeleteContractual = @"D:\data\Pvvnl\DeleteContractual\";
+        [Route("DeleteContractualUpload")]
+        [HttpPost]
+        public async Task<IActionResult> DeleteContractualUpload(IFormFile file, [FromForm] string extraData)
+        {
+
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest("No file uploaded.");
+            }
+
+            try
+            {
+                if (!Directory.Exists(DeleteContractual))
+                {
+                    Directory.CreateDirectory(DeleteContractual);
+                }
+                var filePath = "";
+                if (!(string.IsNullOrEmpty(extraData)))
+                {
+                    filePath = Path.Combine(DeleteContractual, extraData);
+                    filePath = filePath + "_" + file.FileName;
+
+                }
+                else
+                {
+                    filePath = DeleteContractual;
+                    filePath = filePath + "_" + file.FileName;
+                }
+
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+
+                return Ok(APIResponse.SendResponse("Success", null, filePath));
+            }
+            catch (Exception ex)
+            {
+                return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
+            }
+        }
+
 
     }
 }
