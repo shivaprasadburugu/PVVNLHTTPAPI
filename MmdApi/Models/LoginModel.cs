@@ -22,6 +22,11 @@ namespace MdmApi.Web.Models
         [JsonProperty("officeaddress")]
         public string officeaddress { get; set; }
 
+        [JsonProperty("captchaId")]
+        public string captchaId { get; set; }
+        [JsonProperty("captchaText")]
+        public string captchaText { get; set; }
+
 
     }
     public class LoginModel1

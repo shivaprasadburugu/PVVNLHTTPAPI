@@ -16,4 +16,11 @@ namespace MdmApi.Models
         public bool IsLocked { get; set; }
         public DateTime? LockedUntil { get; set; }
     }
+
+    public class CaptchaImageResponse
+    {
+        public string CaptchaId { get; set; }
+        public string ImageBase64 { get; set; }
+    }
+
 }

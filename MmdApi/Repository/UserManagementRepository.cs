@@ -19,6 +19,7 @@ using Npgsql;
 using NpgsqlTypes;
 
 using System.Security.Cryptography;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace MdmApi.Repository
 {
@@ -29,12 +30,14 @@ namespace MdmApi.Repository
         private readonly IDatabaseSecureConnectionHelperRepository _databaseSecureConnectionHelper;
         public readonly IConfiguration _config;
         private readonly JwtTokenService _jwtService;
+        private readonly IMemoryCache _cache;
 
         //private readonly Cryptography _cry;
 
         //  private readonly TokenValidationParameters _tokenValidationParameters;
         public UserManagementRepository( ContextDb context,
             IOptions<ServiceConfiguration> settings, IDatabaseSecureConnectionHelperRepository databaseSecureConnectionHelper, IConfiguration configuration, JwtTokenService jwtService
+            , IMemoryCache cache
 
           )
         {
@@ -43,6 +46,7 @@ namespace MdmApi.Repository
             _databaseSecureConnectionHelper = databaseSecureConnectionHelper;
             _config = configuration;
             _jwtService = jwtService;
+            _cache = cache;
 
             //_cry = cry;
         }
@@ -51,6 +55,21 @@ namespace MdmApi.Repository
             ResponseModel<LoginResponseWeb> response = new ResponseModel<LoginResponseWeb>();
             try
             {
+                if (!_cache.TryGetValue(login.captchaId, out string expectedCaptcha))
+                {
+                    response.IsSuccess = false;
+                    response.Message = "Captcha expired";
+                    return response;
+                }
+
+                if (!string.Equals(expectedCaptcha, login.captchaText, StringComparison.OrdinalIgnoreCase))
+                {
+                    response.IsSuccess = false;
+                    response.Message = "Invalid captcha";
+                    return response;
+                }
+
+                _cache.Remove(login.captchaId); // one-time use
                 LoginResponseWeb user = new LoginResponseWeb();
                 Cryptography _cry = new Cryptography();
                 var dotnetppassword = _cry.Encrypt(login.password);
