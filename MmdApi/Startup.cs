@@ -55,6 +55,7 @@ namespace MmdApi
                 });
             });
 
+            services.AddMemoryCache();
             // Controllers with global Authorize
             services.AddControllers(config =>
             {

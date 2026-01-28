@@ -9,6 +9,8 @@ using MdmApi.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 
 namespace MdmApi.Controllers
 {
@@ -19,10 +21,18 @@ namespace MdmApi.Controllers
     public class UserManagementController : ControllerBase
     {
         private readonly IUserManagementRepository _userManagementRepo;
+        private readonly IMemoryCache _memoryCache;
+        private readonly ILogger<UserManagementController> _logger;
+        private const int MAX_ATTEMPTS = 5;
+        private static readonly TimeSpan ATTEMPT_WINDOW = TimeSpan.FromMinutes(1);
+        private static readonly TimeSpan LOCKOUT_DURATION = TimeSpan.FromMinutes(15);
 
-        public UserManagementController(IUserManagementRepository userManagementRepo)
+        public UserManagementController(IUserManagementRepository userManagementRepo, IMemoryCache memoryCache,
+        ILogger<UserManagementController> logger)
         {
             _userManagementRepo = userManagementRepo;
+            _memoryCache = memoryCache;
+            _logger = logger;
         }
 
         [Route("IsLoginIdExists")]
@@ -654,18 +664,74 @@ namespace MdmApi.Controllers
         [AllowAnonymous]
         [Route("SecurityQuestionanswers1Validate")]
         [HttpPost]
-        public async Task<IActionResult> SecurityQuestionanswers1Validate([FromBody] SecurityQuestionModel CreateRoleModel)
+        public async Task<IActionResult> SecurityQuestionanswers1Validate(
+     [FromBody] SecurityQuestionModel CreateRoleModel)
         {
-            
-            string token = _userManagementRepo.SecurityQuestionanswers1Validate(CreateRoleModel);
-            if (token != null)
+            string ip = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+            string cacheKey = $"SEC_Q:{CreateRoleModel.employee_id}:{ip}";
+
+            // 🔒 Check lock status
+            if (_memoryCache.TryGetValue(cacheKey, out SecurityAttemptInfo attempt))
             {
+                if (attempt.IsLocked && attempt.LockedUntil > DateTime.UtcNow)
+                {
+                    return StatusCode(429,
+                        APIResponse.SendResponse(
+                            "Too Many Attempts",
+                            "Account temporarily locked. Try again later."));
+                }
+            }
+
+            // 🔐 Existing validation logic
+            string token = _userManagementRepo.SecurityQuestionanswers1Validate(CreateRoleModel);
+
+            if (!string.IsNullOrEmpty(token))
+            {
+                // ✅ SUCCESS → reset attempts
+                _memoryCache.Remove(cacheKey);
+
                 return Ok(APIResponse.SendResponse("Success", null, token));
+            }
+
+            // ❌ FAILED ATTEMPT
+            if (attempt == null)
+            {
+                attempt = new SecurityAttemptInfo
+                {
+                    AttemptCount = 1,
+                    FirstAttemptTime = DateTime.UtcNow
+                };
             }
             else
             {
-                return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
+                attempt.AttemptCount++;
             }
+
+            // 🚨 Lock condition
+            if (attempt.AttemptCount >= MAX_ATTEMPTS &&
+                DateTime.UtcNow - attempt.FirstAttemptTime <= ATTEMPT_WINDOW)
+            {
+                attempt.IsLocked = true;
+                attempt.LockedUntil = DateTime.UtcNow.Add(LOCKOUT_DURATION);
+
+                _memoryCache.Set(cacheKey, attempt, LOCKOUT_DURATION);
+
+                _logger.LogWarning(
+                    "Security Question LOCKOUT. User:{UserId}, IP:{IP}",
+                    CreateRoleModel.employee_id, ip);
+
+                return StatusCode(429,
+                    APIResponse.SendResponse(
+                        "Too Many Attempts",
+                        "Account locked for 15 minutes."));
+            }
+
+            // ⏱ Store attempt
+            _memoryCache.Set(cacheKey, attempt, ATTEMPT_WINDOW);
+
+            return BadRequest(APIResponse.SendResponse(
+                "Invalid Answer",
+                "Security question answer is incorrect."));
         }
 
         [AllowAnonymous]
