@@ -727,6 +727,7 @@ namespace MdmApi.Repository
                 lstParams.Add(new KeyValuePair<string, object>("office_type", ContractEmployeeDetailsModel.officetype != null ? ContractEmployeeDetailsModel.officetype : DBNull.Value.ToString()));
                 lstParams.Add(new KeyValuePair<string, object>("Joining_letter", ContractEmployeeDetailsModel.joininglatterpath != null ? ContractEmployeeDetailsModel.joininglatterpath : DBNull.Value.ToString()));
                 lstParams.Add(new KeyValuePair<string, object>("aadhaarfile_path", ContractEmployeeDetailsModel.aadharpath != null ? ContractEmployeeDetailsModel.aadharpath : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("qualificationfile_path", ContractEmployeeDetailsModel.qualificationpath != null ? ContractEmployeeDetailsModel.qualificationpath : DBNull.Value.ToString()));
 
 
 

@@ -238,7 +238,7 @@ namespace MdmApi.Helpers
 
         public static readonly string[] contractemployee_hierarchy_details_insert = { "call contractemployee_hierarchy_details_insert(@employee_id,@first_name,@father_name,@perment_address,@mobile_number," +
                 "@designation_name,@department_name,@authentication_mode,@created_by,@level1_code,@level2_code,@level3_code,@level4_code,@level5_code,@level6_code,@role_id,@aadhaar_no,@agency_name,@p_category," +
-                "@p_qualification,@gender,@office_type,@Joining_letter,@aadhaarfile_path)", "0" };
+                "@p_qualification,@gender,@office_type,@Joining_letter,@aadhaarfile_path,@qualificationfile_path)", "0" };
         public static readonly string[] employeequalification_insert = { "call employeequalification_insert  (@employee_id,@qualification_name,@universitys,@yearof_passing,@percentageof_marks,@nameofthe_college,@yearof_entering)", "0" };
         public static readonly string[] employeeexperience_insert = { "call employeeexperience_insert  (@employee_id,@nameof_employer,@start_date,@end_date,@designations,@salaryon_leaving,@reasonsfor_leaving)", "0" };
         public static readonly string[] softwareskills_insert = { "call softwareskills_insert  (@employee_id,@languages,@noofyear_experience,@ratingout_of10)", "0" };

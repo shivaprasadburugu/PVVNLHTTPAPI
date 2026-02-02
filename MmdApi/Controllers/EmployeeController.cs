@@ -1828,6 +1828,10 @@ namespace MdmApi.Controllers
 
             try
             {
+                if (!Directory.Exists(OndutyApprovalOrder))
+                {
+                    Directory.CreateDirectory(OndutyApprovalOrder);
+                }
                 var filePath = "";
                 if (!(string.IsNullOrEmpty(extraData)))
                 {
@@ -1867,6 +1871,10 @@ namespace MdmApi.Controllers
 
             try
             {
+                if (!Directory.Exists(OndutyApprovalOrder1))
+                {
+                    Directory.CreateDirectory(OndutyApprovalOrder1);
+                }
                 var filePath = "";
                 if (!(string.IsNullOrEmpty(extraData)))
                 {
@@ -1877,6 +1885,50 @@ namespace MdmApi.Controllers
                 else
                 {
                     filePath = OndutyApprovalOrder1;
+                    filePath = filePath + "_" + file.FileName;
+                }
+
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+
+                return Ok(APIResponse.SendResponse("Success", null, filePath));
+            }
+            catch (Exception ex)
+            {
+                return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
+            }
+        }
+        
+        private const string OndutyApprovalOrder4 = @"D:\data\Pvvnl\Education\";
+        [Route("EducationDocumentUpload")]
+        [HttpPost]
+        public async Task<IActionResult> EducationDocumentUpload(IFormFile file, [FromForm] string extraData)
+        {
+
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest("No file uploaded.");
+            }
+
+            try
+            {
+                if (!Directory.Exists(OndutyApprovalOrder4))
+                {
+                    Directory.CreateDirectory(OndutyApprovalOrder4);
+                }
+                var filePath = "";
+                if (!(string.IsNullOrEmpty(extraData)))
+                {
+                    filePath = Path.Combine(OndutyApprovalOrder4, extraData);
+                    filePath = filePath + "_" + file.FileName;
+
+                }
+                else
+                {
+                    filePath = OndutyApprovalOrder4;
                     filePath = filePath + "_" + file.FileName;
                 }
 
@@ -1908,6 +1960,10 @@ namespace MdmApi.Controllers
 
             try
             {
+                if (!Directory.Exists(OndutyApprovalOrder2))
+                {
+                    Directory.CreateDirectory(OndutyApprovalOrder2);
+                }
                 var filePath = "";
                 if (!(string.IsNullOrEmpty(extraData)))
                 {

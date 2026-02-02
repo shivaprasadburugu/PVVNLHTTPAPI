@@ -343,6 +343,9 @@ namespace MdmApi.Models
         [JsonProperty("aadharpath")]
         public string aadharpath { get; set; }
         
+        [JsonProperty("qualificationpath")]
+        public string qualificationpath { get; set; }
+        
         [JsonProperty("passwords")]
         public string passwords { get; set; }
         [JsonProperty("rejectreason")]
