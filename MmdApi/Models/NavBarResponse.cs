@@ -12,6 +12,7 @@ namespace MdmApi.Models
         public List<NavBarlist> EmployeeList { get; set; }
         public List<NavBarlist> ConfigurationList { get; set; }
         public List<NavBarlist> AdminList { get; set; }
+        public List<NavBarlist> SLAList { get; set; }
     }
 
     public class MobileNavBarResponse

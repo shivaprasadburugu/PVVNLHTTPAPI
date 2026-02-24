@@ -198,6 +198,29 @@ namespace MdmApi.Models
         [JsonProperty("status")]
         public string status { get; set; }
     }
+
+    public class IssueResolutionReport
+    {
+        [JsonProperty("fromdate")]
+        public string fromdate { get; set; }
+        [JsonProperty("todate")]
+        public string todate { get; set; }
+        [JsonProperty("employeeid")]
+        public string employeeid { get; set; }
+        [JsonProperty("description")]
+        public string description { get; set; }
+        [JsonProperty("status")]
+        public string status { get; set; }
+
+        [JsonProperty("impact")]
+        public string impact { get; set; }
+        [JsonProperty("resolutionaction")]
+        public string resolutionaction { get; set; }
+
+        [JsonProperty("zonename")]
+        public string zonename { get; set; }
+
+    }
 }
 
 

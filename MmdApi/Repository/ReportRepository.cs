@@ -722,5 +722,116 @@ namespace MdmApi.Repository
                 return null;
             }
         }
+
+
+        public DataSet DownTimeReport(EmployeeMonthReport employeeMonthReport)
+        {
+            try
+            {
+                DateTime parseddate = DateTime.ParseExact(employeeMonthReport.fromdate, new[] { "dd-MM-yyyy", "dd/MM/yyyy", "MM-dd-yyyy", "MM/dd/yyyy", "yyyy-MM-dd", "yyyy/MM/dd" }, null, System.Globalization.DateTimeStyles.None);
+                string fromDate = parseddate.ToString("yyyy-MM-dd");
+                DateTime parseddate1 = DateTime.ParseExact(employeeMonthReport.todate, new[] { "dd-MM-yyyy", "dd/MM/yyyy", "MM-dd-yyyy", "MM/dd/yyyy", "yyyy-MM-dd", "yyyy/MM/dd" }, null, System.Globalization.DateTimeStyles.None);
+                string todate = parseddate1.ToString("yyyy-MM-dd");
+                List<KeyValuePair<string, object>> lstParams = new List<KeyValuePair<string, object>>();
+                lstParams.Add(new KeyValuePair<string, object>("fromdate", fromDate));
+                lstParams.Add(new KeyValuePair<string, object>("todate", todate));
+
+                DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.downtime_report[0], StoredProcedure.downtime_report[1], lstParams);
+                return ds;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public DataSet FarReport(EmployeeMonthReport employeeMonthReport)
+        {
+            try
+            {
+                DateTime parseddate = DateTime.ParseExact(employeeMonthReport.fromdate, new[] { "dd-MM-yyyy", "dd/MM/yyyy", "MM-dd-yyyy", "MM/dd/yyyy", "yyyy-MM-dd", "yyyy/MM/dd" }, null, System.Globalization.DateTimeStyles.None);
+                string fromDate = parseddate.ToString("yyyy-MM-dd");
+                DateTime parseddate1 = DateTime.ParseExact(employeeMonthReport.todate, new[] { "dd-MM-yyyy", "dd/MM/yyyy", "MM-dd-yyyy", "MM/dd/yyyy", "yyyy-MM-dd", "yyyy/MM/dd" }, null, System.Globalization.DateTimeStyles.None);
+                string todate = parseddate1.ToString("yyyy-MM-dd");
+                List<KeyValuePair<string, object>> lstParams = new List<KeyValuePair<string, object>>();
+                lstParams.Add(new KeyValuePair<string, object>("fromdate", fromDate));
+                lstParams.Add(new KeyValuePair<string, object>("todate", todate));
+
+                DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.farandfrr_report[0], StoredProcedure.farandfrr_report[1], lstParams);
+                return ds;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public DataSet IssueLoggingResolutionReport(EmployeeMonthReport employeeMonthReport)
+        {
+            try
+            {
+                DateTime parseddate = DateTime.ParseExact(employeeMonthReport.fromdate, new[] { "dd-MM-yyyy", "dd/MM/yyyy", "MM-dd-yyyy", "MM/dd/yyyy", "yyyy-MM-dd", "yyyy/MM/dd" }, null, System.Globalization.DateTimeStyles.None);
+                string fromDate = parseddate.ToString("yyyy-MM-dd");
+                DateTime parseddate1 = DateTime.ParseExact(employeeMonthReport.todate, new[] { "dd-MM-yyyy", "dd/MM/yyyy", "MM-dd-yyyy", "MM/dd/yyyy", "yyyy-MM-dd", "yyyy/MM/dd" }, null, System.Globalization.DateTimeStyles.None);
+                string todate = parseddate1.ToString("yyyy-MM-dd");
+                List<KeyValuePair<string, object>> lstParams = new List<KeyValuePair<string, object>>();
+                lstParams.Add(new KeyValuePair<string, object>("fromdate", fromDate));
+                lstParams.Add(new KeyValuePair<string, object>("todate", todate));
+                //lstParams.Add(new KeyValuePair<string, object>("zone_name", employeeMonthReport.level2name));
+
+                DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.issueloggingandresolution_details[0], StoredProcedure.issueloggingandresolution_details[1], lstParams);
+                return ds;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public DataSet AddIssueLoggingResolutionReport(IssueResolutionReport issueResolutionReport)
+        {
+            try
+            {
+                DateTime parseddate = DateTime.ParseExact(issueResolutionReport.fromdate, new[] { "dd-MM-yyyy", "dd/MM/yyyy", "MM-dd-yyyy", "MM/dd/yyyy", "yyyy-MM-dd", "yyyy/MM/dd" }, null, System.Globalization.DateTimeStyles.None);
+                string fromDate = parseddate.ToString("yyyy-MM-dd");
+
+                List<KeyValuePair<string, object>> lstParams = new List<KeyValuePair<string, object>>();
+                lstParams.Add(new KeyValuePair<string, object>("employee_id", issueResolutionReport.employeeid));
+                lstParams.Add(new KeyValuePair<string, object>("issue_date", fromDate));
+                lstParams.Add(new KeyValuePair<string, object>("descriptions", issueResolutionReport.description));
+                lstParams.Add(new KeyValuePair<string, object>("in_status", issueResolutionReport.status));
+                lstParams.Add(new KeyValuePair<string, object>("im_pact", issueResolutionReport.impact));
+                lstParams.Add(new KeyValuePair<string, object>("resolution_action", issueResolutionReport.resolutionaction));
+                //lstParams.Add(new KeyValuePair<string, object>("zone_name", issueResolutionReport.zonename));
+
+                DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.issueloggingandresolution_insert[0], StoredProcedure.issueloggingandresolution_insert[1], lstParams);
+                return ds;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public DataSet FrrReport(EmployeeMonthReport employeeMonthReport)
+        {
+            try
+            {
+                DateTime parseddate = DateTime.ParseExact(employeeMonthReport.fromdate, new[] { "dd-MM-yyyy", "dd/MM/yyyy", "MM-dd-yyyy", "MM/dd/yyyy", "yyyy-MM-dd", "yyyy/MM/dd" }, null, System.Globalization.DateTimeStyles.None);
+                string fromDate = parseddate.ToString("yyyy-MM-dd");
+                DateTime parseddate1 = DateTime.ParseExact(employeeMonthReport.todate, new[] { "dd-MM-yyyy", "dd/MM/yyyy", "MM-dd-yyyy", "MM/dd/yyyy", "yyyy-MM-dd", "yyyy/MM/dd" }, null, System.Globalization.DateTimeStyles.None);
+                string todate = parseddate1.ToString("yyyy-MM-dd");
+                List<KeyValuePair<string, object>> lstParams = new List<KeyValuePair<string, object>>();
+                lstParams.Add(new KeyValuePair<string, object>("fromdate", fromDate));
+                lstParams.Add(new KeyValuePair<string, object>("todate", todate));
+
+                DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.frr_report[0], StoredProcedure.frr_report[1], lstParams);
+                return ds;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
     }
 }

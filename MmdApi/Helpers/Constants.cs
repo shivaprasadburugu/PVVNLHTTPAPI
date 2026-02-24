@@ -15,20 +15,20 @@ namespace MdmApi.Helpers
     public static class StoredProcedure
     {
         //public static readonly string[] GetTopNavBar = { "call Mdm_GetTopNavBar(@RoleId, @_result_one,@_result_two,@_result_three,@_result_four,@_result_five,@_result_six)", "6" };
-        public static readonly string[] navbar_details = { "call navbar_details(@role_id,@_result_one,@_result_two,@_result_three,@_result_four,@_result_five)", "5" };
+        public static readonly string[] navbar_details = { "call navbar_details(@role_id,@_result_one,@_result_two,@_result_three,@_result_four,@_result_five,@_result_six)", "6" };
         public static readonly string[] GetLoginCheck = { "call GetLoginCheck(@loginuserid,@password, @_result_one)", "1" };
         public static readonly string[] getmultilogincheck_login = { "call getmultilogincheck_login(@loginuserid,@pass_word,@office_address,@_result_one)", "1" };
         public static readonly string[] GetLoginCheckWeb = { "call getmultilogincheck(@loginuserid,@pass_word,@_result_one)", "1" };
         public static readonly string[] usermaster_passwordupdate = { "call usermaster_passwordupdate(@user_id,@passwords)", "0" };
         public static readonly string[] gethierarchydetails = { "call gethierarchydetails(@level,@levelid,@_result_one)", "1" };
         public static readonly string[] getemployeelogincheck = { "call getemployeelogincheck (@employee_id,@password,@_result_one)", "1" };
-        public static readonly string[] GetNavBarDetailsforEditRoles = { "call fetcheditroles  (@role_id,@_result_one,@_result_two,@_result_three,@_result_four,@_result_five)", "5" };
+        public static readonly string[] GetNavBarDetailsforEditRoles = { "call fetcheditroles  (@role_id,@_result_one,@_result_two,@_result_three,@_result_four,@_result_five,@_result_six)", "6" };
         public static readonly string[] GetUserDetailsByUserLoginId = { "call Mdm_GetUserDetailsByUserLoginId(@Username,@Token,@_result_one)", "1" };
         public static readonly string[] GetUserTokenDetails = { "call Mdm_GetUserTokenDetails(@Username,@ClientId,@Token,@Guid,@_result_one)", "1" };
         public static readonly string[] ValidateUserLoginId = { "call Mdm_ValidateUserLoginId(@LoginId,@_result_one)", "1" };
         public static readonly string[] getroles = { "call getroles (@_result_one,@_result_two)", "2" };
         public static readonly string[] deleteroles = { "call deleteroles(@role_id,@_result_one)", "1" };
-        public static readonly string[] NavBarDetailsforRoles = { "call NavBarDetailsforRoles (@_result_one,@_result_two,@_result_three,@_result_four,@_result_five)", "5" };
+        public static readonly string[] NavBarDetailsforRoles = { "call NavBarDetailsforRoles (@_result_one,@_result_two,@_result_three,@_result_four,@_result_five,@_result_six)", "6" };
         public static readonly string[] CreateRole = { "call createrole (@rolename,@navbarlist,@userid,@_result_one)", "1" };
         public static readonly string[] updaterole = { "call updaterole (@role_id,@navbarlist,@userid,@_result_one)", "1" };
         public static readonly string[] navbar_insert = { "call navbar_insert (@navbarname,@controller_name,@action_name,@nav_status,@parent_id,@is_parent,@has_child,@modulename,@navbarheaderid)", "0" };
@@ -95,6 +95,13 @@ namespace MdmApi.Helpers
         public static readonly string[] zone_wise_contract_attendance= { "call zone_wise_contract_attendance(@fromdate,@level,@id,@_result_one,@_result_two)", "2" };
         public static readonly string[] outsource_report = { "call outsource_report(@fromdate,@level,@id,@_result_one,@_result_two)", "2" };
         public static readonly string[] geo_fence_out_report = { "call geo_fence_out_report(@fromdate,@todate,@level,@id,@loginname,@login_type,@_result_one,@_result_two)", "2" };
+
+        //SLA Report 
+        public static readonly string[] downtime_report = { "call downtime_report(@fromdate,@todate,@_result_one,@_result_two)", "2" };
+        public static readonly string[] farandfrr_report = { "call farandfrr_report(@fromdate,@todate,@_result_one,@_result_two)", "2" };
+        public static readonly string[] issueloggingandresolution_details = { "call issueloggingandresolution_details(@fromdate,@todate,@_result_one,@_result_two)", "2" };
+        public static readonly string[] issueloggingandresolution_insert = { "call issueloggingandresolution_insert(@employee_id,@issue_date,@descriptions,@im_pact,@in_status,@resolution_action)", "0" };
+        public static readonly string[] frr_report = { "call frr_report(@fromdate,@todate,@_result_one,@_result_two)", "2" };
 
 
         //security questions

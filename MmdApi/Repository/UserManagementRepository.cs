@@ -565,6 +565,50 @@ namespace MdmApi.Repository
                 }
                 responses.AdminList = AdminList;
 
+                List<NavBarlist> SlaList = new List<NavBarlist>();
+                if (ds.Tables[5].Rows.Count > 0)
+                {
+                    for (int k = 0; k < ds.Tables[5].Rows.Count; k++)
+                    {
+                        int isparent = Convert.ToInt32(ds.Tables[5].Rows[k]["parentid"].ToString());
+                        int childexists = Convert.ToInt32(ds.Tables[5].Rows[k]["haschild"].ToString());
+                        int headerId = Convert.ToInt32(ds.Tables[5].Rows[k]["navbarid"].ToString());
+                        if (isparent == 0 && childexists == 1)
+                        {
+                            List<subitems> SlaCHildnavbarList = new List<subitems>();
+                            for (int j = 0; j < ds.Tables[5].Rows.Count; j++)
+                            {
+                                if (headerId == Convert.ToInt32(ds.Tables[5].Rows[j]["parentid"].ToString()))
+                                {
+                                    SlaCHildnavbarList.Add(new subitems
+                                    {
+                                        name = ds.Tables[5].Rows[j]["name"].ToString(),
+                                        modulename = ds.Tables[5].Rows[j]["modulename"].ToString(),
+                                    });
+                                }
+                            }
+                            SlaList.Add(new NavBarlist
+                            {
+                                name = ds.Tables[5].Rows[k]["name"].ToString(),
+                                modulename = ds.Tables[5].Rows[k]["modulename"].ToString(),
+                                subitems = SlaCHildnavbarList.ToList()
+                            });
+                            SlaCHildnavbarList = null;
+                        }
+                        else if (isparent == 0)
+                        {
+                            SlaList.Add(new NavBarlist
+                            {
+                                name = ds.Tables[5].Rows[k]["name"].ToString(),
+                                modulename = ds.Tables[5].Rows[k]["modulename"].ToString(),
+                                subitems = null
+                            });
+                        }
+                    }
+                }
+                responses.SLAList = SlaList;
+
+
                 response.IsSuccess = true;
                 response.Message = "Success";
                 response.Data = responses;
@@ -674,6 +718,25 @@ namespace MdmApi.Repository
                     }
                 }
                 responses.AdminList = adminList;
+
+                List<NavBarlist> SlaList = new List<NavBarlist>();
+                if (ds.Tables[5].Rows.Count > 0)
+                {
+                    for (int k = 0; k < ds.Tables[5].Rows.Count; k++)
+                    {
+                        SlaList.Add(new NavBarlist
+                        {
+                            navbarid = (Int32)ds.Tables[5].Rows[k]["navbarid"],
+                            name = ds.Tables[5].Rows[k]["name"].ToString(),
+                            ischecked = (Int32)ds.Tables[5].Rows[k]["ischecked"],
+                            parentid = (Int32)ds.Tables[5].Rows[k]["parentid"],
+                            haschild = ds.Tables[5].Rows[k]["haschild"].ToString(),
+                        });
+                    }
+                }
+                responses.SLAList = SlaList;
+
+
 
                 response.IsSuccess = true;
                 response.Message = "Success";
@@ -918,6 +981,21 @@ namespace MdmApi.Repository
                     }
                 }
                 responses.AdminList = adminList;
+                List<NavBarlist> SlaList = new List<NavBarlist>();
+                if (ds.Tables[5].Rows.Count > 0)
+                {
+                    for (int k = 0; k < ds.Tables[5].Rows.Count; k++)
+                    {
+                        SlaList.Add(new NavBarlist
+                        {
+                            navbarid = (Int32)ds.Tables[5].Rows[k]["navbarid"],
+                            name = ds.Tables[5].Rows[k]["name"].ToString(),
+                            parentid = (Int32)ds.Tables[5].Rows[k]["parentid"],
+                            haschild = ds.Tables[5].Rows[k]["haschild"].ToString(),
+                        });
+                    }
+                }
+                responses.SLAList = SlaList;
 
 
 

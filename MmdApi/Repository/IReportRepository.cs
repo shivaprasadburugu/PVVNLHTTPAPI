@@ -52,5 +52,11 @@ namespace MdmApi.Repository
         DataSet OutSourceReport(Date date);
         DataSet EmployeeOutGeoFenceReport(EmployeeMonthReport employeeMonthReport);
 
+        DataSet DownTimeReport(EmployeeMonthReport employeeMonthReport);
+        DataSet FarReport(EmployeeMonthReport employeeMonthReport);
+        DataSet IssueLoggingResolutionReport(EmployeeMonthReport employeeMonthReport);
+        DataSet AddIssueLoggingResolutionReport(IssueResolutionReport issueResolutionReport);
+        DataSet FrrReport(EmployeeMonthReport employeeMonthReport);
+
     }
 }

@@ -542,6 +542,84 @@ namespace MdmApi.Controllers
             }
         }
 
+        [Route("FetchDowntimeReport")]
+        [HttpPost]
+        public async Task<IActionResult> FetchDowntimeReport(EmployeeMonthReport employeeMonthReport)
+        {
+            DataSet ds = new DataSet();
+            ds = _reportRepo.DownTimeReport(employeeMonthReport);
+            if (ds != null)
+            {
+                return Ok(APIResponse.SendResponse("Success", null, ds));
+            }
+            else
+            {
+                return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
+            }
+        }
+        [Route("FetchFarReport")]
+        [HttpPost]
+        public async Task<IActionResult> FetchFarReport(EmployeeMonthReport employeeMonthReport)
+        {
+            DataSet ds = new DataSet();
+            ds = _reportRepo.FarReport(employeeMonthReport);
+            if (ds != null)
+            {
+                return Ok(APIResponse.SendResponse("Success", null, ds));
+            }
+            else
+            {
+                return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
+            }
+        }
+        [Route("FetchIssueLoggingResolutionReport")]
+        [HttpPost]
+        public async Task<IActionResult> FetchIssueLoggingResolutionReport(EmployeeMonthReport employeeMonthReport)
+        {
+            DataSet ds = new DataSet();
+            ds = _reportRepo.IssueLoggingResolutionReport(employeeMonthReport);
+            if (ds != null)
+            {
+                return Ok(APIResponse.SendResponse("Success", null, ds));
+            }
+            else
+            {
+                return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
+            }
+        }
+
+        [Route("InsertIssueLoggingResolutionReport")]
+        [HttpPost]
+        public async Task<IActionResult> InsertIssueLoggingResolutionReport(IssueResolutionReport issueResolutionReport)
+        {
+            DataSet ds = new DataSet();
+            ds = _reportRepo.AddIssueLoggingResolutionReport(issueResolutionReport);
+            if (ds != null)
+            {
+                return Ok(APIResponse.SendResponse("Success", null, ds));
+            }
+            else
+            {
+                return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
+            }
+        }
+
+        [Route("FetchFrrReport")]
+        [HttpPost]
+        public async Task<IActionResult> FetchFrrReport(EmployeeMonthReport employeeMonthReport)
+        {
+            DataSet ds = new DataSet();
+            ds = _reportRepo.FrrReport(employeeMonthReport);
+            if (ds != null)
+            {
+                return Ok(APIResponse.SendResponse("Success", null, ds));
+            }
+            else
+            {
+                return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
+            }
+        }
+
     }
 
 
