@@ -2484,6 +2484,7 @@ namespace MdmApi.Repository
                 lstParams.Add(new KeyValuePair<string, object>("Joining_letter", ContractEmployeeDetailsModel.joininglatterpath != null ? ContractEmployeeDetailsModel.joininglatterpath : DBNull.Value.ToString()));
                 lstParams.Add(new KeyValuePair<string, object>("aadhaar_filepath", ContractEmployeeDetailsModel.aadharpath != null ? ContractEmployeeDetailsModel.aadharpath : DBNull.Value.ToString()));
                 lstParams.Add(new KeyValuePair<string, object>("reject_reason", ContractEmployeeDetailsModel.rejectreason != null ? ContractEmployeeDetailsModel.rejectreason : DBNull.Value.ToString()));
+                lstParams.Add(new KeyValuePair<string, object>("qualifictaionPhoto", ContractEmployeeDetailsModel.qualifictaionPhoto != null ? ContractEmployeeDetailsModel.qualifictaionPhoto : DBNull.Value.ToString()));
 
 
 

@@ -343,7 +343,7 @@ namespace MdmApi.Helpers
         public static readonly string[] contractemployee_details_reject_save = { "call contractemployee_details_reject_save(@empid)", "0" };
         public static readonly string[] contractemployee_hierarchy_details_reject_update = { "call contractemployee_hierarchy_details_reject_update(@employee_id,@first_name,@father_name," +
                 "@designation_name,@department_name,@mobile_number,@perment_address,@authentication_mode,@passwords,@created_by,@level1_code,@level2_code,@level3_code,@level4_code,@level5_code,@level6_code,@aadhaar_no,@agency_name,@p_category," +
-                "@p_qualification,@gender,@office_type,@Joining_letter,@reject_reason,@aadhaar_filepath)", "0" };
+                "@p_qualification,@gender,@office_type,@Joining_letter,@reject_reason,@aadhaar_filepath,@qualifictaionPhoto)", "0" };
 
         public static readonly string[] pending_contractemployee_hierarchy_details = { "call pending_contractemployee_hierarchy_details(@level,@eid,@_result_one,@_result_two)", "2" };
 

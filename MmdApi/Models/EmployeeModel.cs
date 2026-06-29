@@ -350,6 +350,8 @@ namespace MdmApi.Models
         public string passwords { get; set; }
         [JsonProperty("rejectreason")]
         public string rejectreason { get; set; }
+        [JsonProperty("qualifictaionPhoto")]
+        public string qualifictaionPhoto { get; set; }
     }
 
     public class contractempHierarchy
