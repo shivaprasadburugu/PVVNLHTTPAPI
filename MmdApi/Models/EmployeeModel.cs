@@ -776,6 +776,11 @@ namespace MdmApi.Models
         [JsonProperty("insertedby")]
         public string insertedby { get; set; }
 
+        [JsonProperty("insertedUserid")]
+        public string insertedUserid { get; set; }
+
+
+
     }
     public class manuallogs
     {
@@ -785,9 +790,13 @@ namespace MdmApi.Models
         [JsonProperty("id")]
         public int id { get; set; }
 
+        [JsonProperty("monthyear")]
+        public string monthyear { get; set; }
+
+
     }
 
-    
+
     public class ManualLogString
     {
         [JsonProperty("employeeid")]
@@ -803,7 +812,10 @@ namespace MdmApi.Models
         [JsonProperty("reason")]
         public string reason { get; set; }
         [JsonProperty("insertedby")]
-        public string insertedby { get; set; }
+        public string insertedby { get; set; }  
+
+        [JsonProperty("insertedUserid")]
+        public string insertedUserid { get; set; }
 
     }
     public class LeaveFromDate

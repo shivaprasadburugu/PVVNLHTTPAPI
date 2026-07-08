@@ -72,5 +72,6 @@ namespace MdmApi.Repository
         DataSet GetEnrolledNotEnrolledCount(EnrolledNotEnrolled status);
         DataSet GetGEOLocationStatusCount(EnrolledNotEnrolled status);
         DataSet GetEmployeeGeoStatusOnclick(Departmentname _department);
+        DataSet Getcontractfieldenrolledemployees(Departmentname _department);
     }
 }

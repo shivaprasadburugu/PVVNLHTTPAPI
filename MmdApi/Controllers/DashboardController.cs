@@ -263,6 +263,9 @@ namespace MdmApi.Controllers
                 return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
             }
         }
+
+
+
         [Route("ContractOfficeEmployeeOnclick")]
         [HttpPost]
         public async Task<IActionResult> ContractOfficeEmployeeOnclick(Departmentname _departmentname)
@@ -649,6 +652,25 @@ namespace MdmApi.Controllers
         {
             DataSet ds = new DataSet();
             ds = _dashboardRepo.GetEmployeeGeoStatusOnclick(_departmentname);
+            if (ds != null)
+            {
+                return Ok(APIResponse.SendResponse("Success", null, ds));
+            }
+            else
+            {
+                return Ok(APIResponse.SendResponse("No Data Available", "No Data Available"));
+            }
+        }
+
+
+
+        //DataSet Getcontractfieldenrolledemployees(Departmentname _department)
+        [Route("Getcontractfieldenrolledemployees")]
+        [HttpPost]
+        public async Task<IActionResult> Getcontractfieldenrolledemployees(Departmentname _departmentname)
+        {
+            DataSet ds = new DataSet();
+            ds = _dashboardRepo.Getcontractfieldenrolledemployees(_departmentname);
             if (ds != null)
             {
                 return Ok(APIResponse.SendResponse("Success", null, ds));

@@ -877,20 +877,47 @@ namespace MdmApi.Controllers
             }
         }
 
+        //[Route("ManuallogInsert")]
+        //[HttpPost]
+        //public async Task<IActionResult> ManuallogInsert(ManualLogString manuallog)
+        //{
+        //    DataSet ds = new DataSet();
+        //    ds = _employeeRepo.ManualLoginsert(manuallog);
+        //    if (ds != null)
+        //    {
+        //        return Ok(APIResponse.SendResponse("Success", null, ds));
+        //    }
+        //    else
+        //    {
+        //        return Ok(APIResponse.SendResponse("Failed", "Failed"));
+        //    }
+        //}
+
+
         [Route("ManuallogInsert")]
         [HttpPost]
-        public async Task<IActionResult> ManuallogInsert(ManualLogString manuallog)
+        public IActionResult ManuallogInsert(ManualLogString manuallog)
         {
-            DataSet ds = new DataSet();
-            ds = _employeeRepo.ManualLoginsert(manuallog);
-            if (ds != null)
+            DataSet ds = _employeeRepo.ManualLoginsert(manuallog);
+
+            if (ds != null &&
+                ds.Tables.Count > 0 &&
+                ds.Tables[0].Rows.Count > 0)
             {
-                return Ok(APIResponse.SendResponse("Success", null, ds));
+                int status = Convert.ToInt32(ds.Tables[0].Rows[0]["status"]);
+                string message = ds.Tables[0].Rows[0]["message"].ToString();
+
+                if (status == 1)
+                {
+                    return Ok(APIResponse.SendResponse("Success", message, ds));
+                }
+                else
+                {
+                    return Ok(APIResponse.SendResponse("Failed", message));
+                }
             }
-            else
-            {
-                return Ok(APIResponse.SendResponse("Failed", "Failed"));
-            }
+
+            return Ok(APIResponse.SendResponse("Failed", "Unable to process request."));
         }
 
         [Route("ManuallogDelete")]
@@ -925,20 +952,47 @@ namespace MdmApi.Controllers
             }
         }
 
+        //[Route("ManuallogUpdate")]
+        //[HttpPost]
+        //public async Task<IActionResult> ManuallogUpdate(ManualLog1 manuallog)
+        //{
+        //    DataSet ds = new DataSet();
+        //    ds = _employeeRepo.ManualLogupdate(manuallog);
+        //    if (ds != null)
+        //    {
+        //        return Ok(APIResponse.SendResponse("Success", null, ds));
+        //    }
+        //    else
+        //    {
+        //        return Ok(APIResponse.SendResponse("Failed", "Failed"));
+        //    }
+        //}
+
+
         [Route("ManuallogUpdate")]
         [HttpPost]
-        public async Task<IActionResult> ManuallogUpdate(ManualLog1 manuallog)
+        public IActionResult ManuallogUpdate(ManualLog1 manuallog)
         {
-            DataSet ds = new DataSet();
-            ds = _employeeRepo.ManualLogupdate(manuallog);
-            if (ds != null)
+            DataSet ds = _employeeRepo.ManualLogupdate(manuallog);
+
+            if (ds != null &&
+                ds.Tables.Count > 0 &&
+                ds.Tables[0].Rows.Count > 0)
             {
-                return Ok(APIResponse.SendResponse("Success", null, ds));
+                int status = Convert.ToInt32(ds.Tables[0].Rows[0]["status"]);
+                string message = ds.Tables[0].Rows[0]["message"].ToString();
+
+                if (status == 1)
+                {
+                    return Ok(APIResponse.SendResponse("Success", message, ds));
+                }
+                else
+                {
+                    return Ok(APIResponse.SendResponse("Failed", message));
+                }
             }
-            else
-            {
-                return Ok(APIResponse.SendResponse("Failed", "Failed"));
-            }
+
+            return Ok(APIResponse.SendResponse("Failed", "Unable to process request."));
         }
 
         [Route("GetInactiveEmployeesList")]

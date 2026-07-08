@@ -860,5 +860,27 @@ namespace MdmApi.Repository
                 return null;
             }
         }
+
+        public DataSet Getcontractfieldenrolledemployees(Departmentname _department)
+        {
+            try
+            {
+                DateTime parseddate = DateTime.ParseExact(_department.date, new[] { "dd-MM-yyyy", "dd/MM/yyyy", "MM-dd-yyyy", "MM/dd/yyyy", "yyyy-MM-dd", "yyyy/MM/dd" }, null, System.Globalization.DateTimeStyles.None);
+                string date = parseddate.ToString("yyyy-MM-dd");
+                List<KeyValuePair<string, object>> lstParams = new List<KeyValuePair<string, object>>();
+                lstParams.Add(new KeyValuePair<string, object>("date", date));
+                lstParams.Add(new KeyValuePair<string, object>("deptname", _department.departmentname));
+                lstParams.Add(new KeyValuePair<string, object>("level", _department.level));
+                lstParams.Add(new KeyValuePair<string, object>("id", _department.levelid));
+                lstParams.Add(new KeyValuePair<string, object>("loginname", _department.loginName));
+                lstParams.Add(new KeyValuePair<string, object>("login_type", _department.loginType));
+                DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.contractfieldenrolledemployees[0], StoredProcedure.contractfieldenrolledemployees[1], lstParams);
+                return ds;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
     }
 }

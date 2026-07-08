@@ -167,7 +167,7 @@ namespace MdmApi.Helpers
         public static readonly string[] employeesoptionalholiday_insert = { "call employeesoptionalholiday_insert (@employee_id,@holiday_name,@holiday_date,@reasons,@manager_id)", "0" };
         public static readonly string[] employeesoptionalholiday_update_reject = { "call employeesoptionalholiday_update_reject (@leave_id,@status)", "0" };
         public static readonly string[] employee_maplocation = { "call employee_maplocation(@empid,@date,@_result_one)", "1" };
-        public static readonly string[] manuallogs_update={ "call manuallogs_update (@manuallog_id,@employee_id,@in_time,@out_time,@reasons,@inserted_by)", "0" };
+        public static readonly string[] manuallogs_update={ "call manuallogs_update (@manuallog_id,@employee_id,@in_time,@out_time,@reasons,@inserted_by,@inserted_userid,@_result_one)", "1" };
 
         public static readonly string[] shift_details = { "call shift_details(@_result_one,@_result_two)", "2" };
         public static readonly string[] shift_fetch = { "call shift_fetch(@shift_id,@_result_one)", "1" };
@@ -268,8 +268,8 @@ namespace MdmApi.Helpers
         public static readonly string[] employeeadvance_accept_rejected = { "call employeeadvance_accept_rejected  (@advance_id,@status)", "0" };
         public static readonly string[] employeepermission_duration = { "call employeepermission_duration  (@empid,@permission_date,@_result_one)", "1" };
         //public static readonly string[] manuallogs_details = { "call manuallogs_details(@_result_one,@_result_two)", "2" };
-        public static readonly string[] manuallogs_details = { "call manuallogs_details(@level,@id,@_result_one,@_result_two)", "2" };
-        public static readonly string[] manuallogs_insert = { "call manuallogs_insert (@employee_id,@in_time,@out_time,@reasons,@inserted_by)", "0" };
+        public static readonly string[] manuallogs_details = { "call manuallogs_details(@level,@id,@p_month,@_result_one,@_result_two)", "2" };
+        public static readonly string[] manuallogs_insert = { "call manuallogs_insert1 (@employee_id,@in_time,@out_time,@reasons,@inserted_by,@inserted_userid,@_result_one)", "1" };
         public static readonly string[] manuallogs_delete ={ "call manuallogs_delete(@manuallog_id,@inserted_by)", "0" };
         public static readonly string[] manuallogs_fetch = { "call manuallogs_fetch (@manuallog_id,@_result_one)", "1" };
         public static readonly string[] employeeadvancetransactions_insert ={ "call employeeadvancetransactions_insert(@advance_id,@employee_id,@deduction_month,@advance_amount,@amountof_deduction,@status,@deduction_status,@update_by)", "0" };
@@ -453,6 +453,7 @@ namespace MdmApi.Helpers
         public static readonly string[] employee_attendance_intimefetch = { "call employee_attendance_intimefetch (@date,@empid,@_result_one)", "1" };
         public static readonly string[] employeemanagement_details_A_B = { "call employeemanagement_details_A_B(@level,@id,@_result_one,@_result_two)", "2" };
         public static readonly string[] employeemanagement_details_C_D = { "call employeemanagement_details_C_D(@level,@id,@_result_one,@_result_two)", "2" };
+        public static readonly string[] contractfieldenrolledemployees = { "call contractfieldenrolledemployees(@date,@deptname,@level,@id,@loginname,@login_type,@_result_one)", "1" };
 
 
     }

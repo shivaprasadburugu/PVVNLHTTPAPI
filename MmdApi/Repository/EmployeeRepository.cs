@@ -1379,11 +1379,13 @@ namespace MdmApi.Repository
 
         public DataSet ManualLogsDetails(manuallogs manuallogs)
         {
+
             try
             {
                 List<KeyValuePair<string, object>> lstParams = new List<KeyValuePair<string, object>>();
                 lstParams.Add(new KeyValuePair<string, object>("level", manuallogs.level));
                 lstParams.Add(new KeyValuePair<string, object>("id", manuallogs.id));
+                lstParams.Add(new KeyValuePair<string, object>("p_month", manuallogs.monthyear));
                 DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.manuallogs_details[0], StoredProcedure.manuallogs_details[1], lstParams);
                 return ds;
             }
@@ -1393,27 +1395,54 @@ namespace MdmApi.Repository
             }
         }
 
+        //public DataSet ManualLoginsert(ManualLogString manuallog)
+        //{
+        //    DateTime parseddate = DateTime.ParseExact(manuallog.date, new[] { "dd-MM-yyyy", "dd/MM/yyyy", "MM-dd-yyyy", "MM/dd/yyyy", "yyyy-MM-dd", "yyyy/MM/dd" }, null, System.Globalization.DateTimeStyles.None);
+        //    string date1 = parseddate.ToString("yyyy-MM-dd");
+        //    string intime = date1 + " " + manuallog.intime;
+        //    string outtime = date1 + " " + manuallog.outtime;
+        //    try
+        //    {
+        //        List<KeyValuePair<string, object>> lstParams = new List<KeyValuePair<string, object>>();
+        //        lstParams.Add(new KeyValuePair<string, object>("employee_id", manuallog.employeeid));
+        //        lstParams.Add(new KeyValuePair<string, object>("in_time", intime));
+        //        lstParams.Add(new KeyValuePair<string, object>("out_time", outtime));
+        //        lstParams.Add(new KeyValuePair<string, object>("reasons", manuallog.reason));
+        //        lstParams.Add(new KeyValuePair<string, object>("inserted_by", manuallog.insertedby));
+        //        lstParams.Add(new KeyValuePair<string, object>("inserted_userid", manuallog.insertedUserid));
+        //        DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.manuallogs_insert[0], StoredProcedure.manuallogs_insert[1], lstParams);
+        //        return ds;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return null;
+        //    }
+        //}
+
         public DataSet ManualLoginsert(ManualLogString manuallog)
         {
-            DateTime parseddate = DateTime.ParseExact(manuallog.date, new[] { "dd-MM-yyyy", "dd/MM/yyyy", "MM-dd-yyyy", "MM/dd/yyyy", "yyyy-MM-dd", "yyyy/MM/dd" }, null, System.Globalization.DateTimeStyles.None);
+            DateTime parseddate = DateTime.ParseExact(
+                manuallog.date,
+                new[] { "dd-MM-yyyy", "dd/MM/yyyy", "MM-dd-yyyy", "MM/dd/yyyy", "yyyy-MM-dd", "yyyy/MM/dd" },
+                null,
+                System.Globalization.DateTimeStyles.None);
+
             string date1 = parseddate.ToString("yyyy-MM-dd");
             string intime = date1 + " " + manuallog.intime;
             string outtime = date1 + " " + manuallog.outtime;
-            try
-            {
-                List<KeyValuePair<string, object>> lstParams = new List<KeyValuePair<string, object>>();
-                lstParams.Add(new KeyValuePair<string, object>("employee_id", manuallog.employeeid));
-                lstParams.Add(new KeyValuePair<string, object>("in_time", intime));
-                lstParams.Add(new KeyValuePair<string, object>("out_time", outtime));
-                lstParams.Add(new KeyValuePair<string, object>("reasons", manuallog.reason));
-                lstParams.Add(new KeyValuePair<string, object>("inserted_by", manuallog.insertedby));
-                DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.manuallogs_insert[0], StoredProcedure.manuallogs_insert[1], lstParams);
-                return ds;
-            }
-            catch (Exception ex)
-            {
-                return null;
-            }
+
+            List<KeyValuePair<string, object>> lstParams = new List<KeyValuePair<string, object>>();
+            lstParams.Add(new KeyValuePair<string, object>("employee_id", manuallog.employeeid));
+            lstParams.Add(new KeyValuePair<string, object>("in_time", intime));
+            lstParams.Add(new KeyValuePair<string, object>("out_time", outtime));
+            lstParams.Add(new KeyValuePair<string, object>("reasons", manuallog.reason));
+            lstParams.Add(new KeyValuePair<string, object>("inserted_by", manuallog.insertedby));
+            lstParams.Add(new KeyValuePair<string, object>("inserted_userid", manuallog.insertedUserid));
+
+            return _databaseSecureConnectionHelper.ExecuteAsDataSet(
+                StoredProcedure.manuallogs_insert[0],
+                StoredProcedure.manuallogs_insert[1],
+                lstParams);
         }
 
         public DataSet ManualLogupdate(ManualLog1 manuallog)
@@ -1431,6 +1460,7 @@ namespace MdmApi.Repository
                 lstParams.Add(new KeyValuePair<string, object>("reasons", manuallog.reason));
                 lstParams.Add(new KeyValuePair<string, object>("manuallog_id", manuallog.manuallogid));
                 lstParams.Add(new KeyValuePair<string, object>("inserted_by", manuallog.insertedby));
+                lstParams.Add(new KeyValuePair<string, object>("inserted_userid", manuallog.insertedUserid));
                 DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.manuallogs_update[0], StoredProcedure.manuallogs_update[1], lstParams);
                 return ds;
             }
