@@ -38,35 +38,21 @@ namespace MmdApi
             // CORS
             services.AddCors(options =>
             {
-                options.AddPolicy("AllowReactApp", policy =>
+                options.AddPolicy("AllowAll", builder =>
                 {
-                    policy.WithOrigins(
-                        "http://localhost:3000",
-                        "https://14.99.141.154:7019",   // public IP web app
-                        "https://pvvnlattendance.atil.info", // public domain web app
-                        "https://172.16.0.246",
-                          "http://172.16.0.205:7006",
-                          "http://localhost:3001",
-                          "http://localhost:3002"
-                    )
-                    .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .AllowCredentials(); // ✅ allow cookies
+                    builder
+                        .AllowAnyOrigin()
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
                 });
             });
 
             services.AddMemoryCache();
             // Controllers with global Authorize
-            services.AddControllers(config =>
-            {
-                var policy = new AuthorizationPolicyBuilder()
-                                .RequireAuthenticatedUser()
-                                .Build();
-                config.Filters.Add(new AuthorizeFilter(policy));
-            })
-            .AddNewtonsoftJson(options =>
-                options.SerializerSettings.ReferenceLoopHandling =
-                    Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+            services.AddControllers()
+    .AddNewtonsoftJson(options =>
+        options.SerializerSettings.ReferenceLoopHandling =
+            Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
             // Swagger
             services.AddSwaggerGen(c =>
@@ -127,35 +113,35 @@ namespace MmdApi
             // JWT Auth
             var jwtSettings = Configuration.GetSection("Jwt");
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                {
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        ClockSkew = TimeSpan.Zero,
-                        ValidIssuer = Configuration["Jwt:Issuer"],
-                        ValidAudience = Configuration["Jwt:Audience"],
-                        IssuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
-                    };
+            //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            //    .AddJwtBearer(options =>
+            //    {
+            //        options.TokenValidationParameters = new TokenValidationParameters
+            //        {
+            //            ValidateIssuer = true,
+            //            ValidateAudience = true,
+            //            ValidateLifetime = true,
+            //            ValidateIssuerSigningKey = true,
+            //            ClockSkew = TimeSpan.Zero,
+            //            ValidIssuer = Configuration["Jwt:Issuer"],
+            //            ValidAudience = Configuration["Jwt:Audience"],
+            //            IssuerSigningKey = new SymmetricSecurityKey(
+            //                Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
+            //        };
 
-                    // ✅ Read token from cookie
-                    options.Events = new JwtBearerEvents
-                    {
-                        OnMessageReceived = context =>
-                        {
-                            if (context.Request.Cookies.ContainsKey("jwt"))
-                            {
-                                context.Token = context.Request.Cookies["jwt"];
-                            }
-                            return Task.CompletedTask;
-                        }
-                    };
-                });
+            //        // ✅ Read token from cookie
+            //        options.Events = new JwtBearerEvents
+            //        {
+            //            OnMessageReceived = context =>
+            //            {
+            //                if (context.Request.Cookies.ContainsKey("jwt"))
+            //                {
+            //                    context.Token = context.Request.Cookies["jwt"];
+            //                }
+            //                return Task.CompletedTask;
+            //            }
+            //        };
+            //    });
 
             // ✅ Add logging (replaces <trace>)
             services.AddLogging(logging =>
@@ -192,6 +178,7 @@ namespace MmdApi
             }
             else
             {
+
                 // ✅ Custom runtime error handler
                 app.UseExceptionHandler(errorApp =>
                 {
@@ -227,30 +214,11 @@ namespace MmdApi
             app.UseRouting();
 
             // 🚧 Custom Origin Protection Middleware (blocks Postman/cURL)
-            app.Use(async (context, next) =>
-            {
-                var origin = context.Request.Headers["Origin"].ToString();
-                var referer = context.Request.Headers["Referer"].ToString();
 
-                // Allow requests only from approved origins
-                var isAllowed =
-                    (!string.IsNullOrEmpty(origin) && allowedOrigins.Contains(origin)) ||
-                    (!string.IsNullOrEmpty(referer) && allowedOrigins.Any(r => referer.StartsWith(r, StringComparison.OrdinalIgnoreCase)));
+            app.UseCors("AllowAll");
 
-                if (!isAllowed)
-                {
-                    context.Response.StatusCode = StatusCodes.Status403Forbidden;
-                    await context.Response.WriteAsync("Access denied: origin not allowed.");
-                    return;
-                }
-
-                await next();
-            });
-
-            app.UseCors("AllowReactApp");
-
-            app.UseAuthentication();
-            app.UseAuthorization();
+            //app.UseAuthentication();
+            //app.UseAuthorization();
 
 
 

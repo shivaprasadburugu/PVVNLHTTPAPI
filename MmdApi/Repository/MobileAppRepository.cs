@@ -186,6 +186,87 @@ namespace MdmApi.Repository
                 return null;
             }
         }
+
+
+        public DataSet InsertIOSMobileLogs(MobileLog mobileLogs)
+        {
+            try
+            {
+                DateTime parseddate = DateTime.ParseExact(mobileLogs.attendance_date, new[] { "dd-MM-yyyy HH:mm:ss", "dd/MM/yyyy HH:mm:ss", "MM-dd-yyyy HH:mm:ss", "MM/dd/yyyy HH:mm:ss", "yyyy-MM-dd HH:mm:ss", "yyyy/MM/dd HH:mm:ss" }, null, System.Globalization.DateTimeStyles.None);
+                string fromdate = parseddate.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+                DateTime parseddate1 = DateTime.ParseExact(mobileLogs.inserteddate, new[] { "dd-MM-yyyy HH:mm:ss", "dd/MM/yyyy HH:mm:ss", "MM-dd-yyyy HH:mm:ss", "MM/dd/yyyy HH:mm:ss", "yyyy-MM-dd HH:mm:ss", "yyyy/MM/dd HH:mm:ss" }, null, System.Globalization.DateTimeStyles.None);
+                string insertedDate = parseddate1.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+
+
+                List<KeyValuePair<string, object>> lstParams = new List<KeyValuePair<string, object>>();
+
+                lstParams.Add(new KeyValuePair<string, object>("empid", mobileLogs.empid));
+                if (mobileLogs.attendance_date == "")
+                {
+                    lstParams.Add(new KeyValuePair<string, object>("attendance_date", DBNull.Value));
+                }
+                else
+                {
+                    lstParams.Add(new KeyValuePair<string, object>("attendance_date", fromdate));
+                }
+                if (mobileLogs.latitude == "")
+                {
+                    lstParams.Add(new KeyValuePair<string, object>("latitude", DBNull.Value));
+                }
+                else
+                {
+                    lstParams.Add(new KeyValuePair<string, object>("latitude", mobileLogs.latitude));
+                }
+                if (mobileLogs.longitude == "")
+                {
+                    lstParams.Add(new KeyValuePair<string, object>("longitude", DBNull.Value));
+                }
+                else
+                {
+                    lstParams.Add(new KeyValuePair<string, object>("longitude", mobileLogs.longitude));
+                }
+                if (mobileLogs.geostatus == "")
+                {
+                    lstParams.Add(new KeyValuePair<string, object>("geo_status", DBNull.Value));
+                }
+                else
+                {
+                    lstParams.Add(new KeyValuePair<string, object>("geo_status", mobileLogs.geostatus));
+                }
+                if (mobileLogs.reason == "")
+                {
+                    lstParams.Add(new KeyValuePair<string, object>("reason", DBNull.Value));
+                }
+                else
+                {
+                    lstParams.Add(new KeyValuePair<string, object>("reason", mobileLogs.reason));
+                }
+                if (mobileLogs.inserteddate == "")
+                {
+                    lstParams.Add(new KeyValuePair<string, object>("inserted_date", DBNull.Value));
+                }
+                else
+                {
+                    lstParams.Add(new KeyValuePair<string, object>("inserted_date", insertedDate));
+                }
+                if (string.IsNullOrWhiteSpace(mobileLogs.appVersion))
+                {
+                    lstParams.Add(new KeyValuePair<string, object>("app_version", DBNull.Value));
+                }
+                else
+                {
+                    lstParams.Add(new KeyValuePair<string, object>("app_version", mobileLogs.appVersion));
+                }
+
+                DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.mobile_iosmobilelogs_insert[0], StoredProcedure.mobile_iosmobilelogs_insert[1], lstParams);
+                return ds;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
         public DataSet MobileEmployeeDetails(string employeeid)
         {            
             try
@@ -920,6 +1001,36 @@ namespace MdmApi.Repository
                 }
 
                 DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.mobile_mobilelogsfailure_insert[0], StoredProcedure.mobile_mobilelogsfailure_insert[1], lstParams);
+                return ds;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public DataSet EmployeeOfficelatlongs(MobileDasboardLogsString mobileDasboardLogsString)
+        {
+            try
+            {
+                List<KeyValuePair<string, object>> lstParams = new List<KeyValuePair<string, object>>();
+                lstParams.Add(new KeyValuePair<string, object>("empid", mobileDasboardLogsString.empid));
+                DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.employee_office_latlongs[0], StoredProcedure.employee_office_latlongs[1], lstParams);
+                return ds;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public DataSet EmployeeAuthenticationMode(MobileDasboardLogsString mobileDasboardLogsString)
+        {
+            try
+            {
+                List<KeyValuePair<string, object>> lstParams = new List<KeyValuePair<string, object>>();
+                lstParams.Add(new KeyValuePair<string, object>("empid", mobileDasboardLogsString.empid));
+                DataSet ds = _databaseSecureConnectionHelper.ExecuteAsDataSet(StoredProcedure.employeeauthenticationmode_chcek[0], StoredProcedure.employeeauthenticationmode_chcek[1], lstParams);
                 return ds;
             }
             catch (Exception ex)

@@ -13,6 +13,7 @@ namespace MdmApi.Repository
 
         //InsertMobileLogs
         DataSet InsertMobileLogs(MobileLog mobileLogs);
+        DataSet InsertIOSMobileLogs(MobileLog mobileLogs);
 
         DataSet MobileEmployeeDetails(string employeeid);
 
@@ -50,5 +51,7 @@ namespace MdmApi.Repository
         DataSet FetchMobileMiscelianeousexpensesDetails(TourDetailsModel tourDetailsModel);
         DataSet MobileAppUpdate();
         DataSet FailedMobileLogs(MobileLog mobileLogs);
+        DataSet EmployeeOfficelatlongs(MobileDasboardLogsString mobileDasboardLogsString);
+        DataSet EmployeeAuthenticationMode(MobileDasboardLogsString mobileDasboardLogsString);
     }
 }

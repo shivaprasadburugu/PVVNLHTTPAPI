@@ -428,6 +428,8 @@ namespace MdmApi.Helpers
         public static readonly string[] mobile_touradvance_insert = { "call mobile_touradvance_insert (@empid,@managerid,@advance_amount,@tour_formdate,@tour_todate,@places,@purposes,@days,@age)", "0" };
         public static readonly string[] mobile_touradvance_fetch = { "call mobile_touradvance_fetch (@tourid,@_result_one)", "1" };
         public static readonly string[] mobile_mobilelogs_insert = { "call mobile_mobilelogs_insert (@empid,@attendance_date,@latitude,@longitude,@geo_status,@reason,@inserted_date,@app_version)", "0" };
+        public static readonly string[] mobile_iosmobilelogs_insert = { "call mobile_iosmobilelogs_insert (@empid,@attendance_date,@latitude,@longitude,@geo_status,@reason,@inserted_date,@app_version,@_result_one)", "1" };
+
         public static readonly string[] mobile_employee_attendance_onclick = { "call mobile_employee_attendance_onclick  (@empid,@att_date,@_result_one)", "1" };
         public static readonly string[] mobile_employee_intime_status = { "call mobile_employee_intime_status  (@empid,@att_date,@_result_one)", "1" };
         public static readonly string[] mobile_pending_approvals = { "call mobile_pending_approvals (@empid,@_result_one,@_result_two,@_result_three,@_result_four,@_result_five)", "5" };
@@ -438,6 +440,8 @@ namespace MdmApi.Helpers
         public static readonly string[] mobileapp_update = { "call mobileapp_update(@_result_one)", "1" };
         //mobile_mobilelogsfailure_insert
         public static readonly string[] mobile_mobilelogsfailure_insert = { "call mobile_mobilelogsfailure_insert (@empid,@attendance_date,@latitude,@longitude,@geo_status,@reason,@inserted_date,@app_version)", "0" };
+        public static readonly string[] employee_office_latlongs = { "call employee_office_latlongs (@empid,@_result_one)", "1" };
+        public static readonly string[] employeeauthenticationmode_chcek = { "call employeeauthenticationmode_chcek (@empid,@_result_one)", "1" };
 
 
         //EmployeeeDashBoard
